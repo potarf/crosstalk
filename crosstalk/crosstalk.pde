@@ -1,19 +1,25 @@
 // Global Constants
+static final int SIM_WIDTH  = 550;
+static final int SIM_HEIGHT = 550;
+
+static final int PULSE_TIME = 25;       
+
 static final int NUM_PHOTONS      = 9000;
-static final int SIM_WIDTH        = 550;
-static final int SIM_HEIGHT       = 550;
-static final int CELL_SIZE        = 2;
-static final float DECAY_RATE     = 0.05;
-static final float SPREAD_PROB    = .5; //0.157 / 4;
-static final float TEMP[][]       = new float [SIM_WIDTH / CELL_SIZE][SIM_HEIGHT / CELL_SIZE];
 static final float LANDAU_DIST[]  = {0.00181951, 0.00923092, 0.0259625, 0.0487989, 0.0698455, 0.0833084,
                                     0.0880665, 0.0860273, 0.079872, 0.0718294, 0.0633677, 0.0553056,
                                     0.0480232, 0.0416416, 0.0361452, 0.031455, 0.0274701, 0.024088,
                                     0.0212148, 0.0187681, 0.0166778, 0.0148852, 0.0133417, 0.0120071,
-                                    0.010848}; 
+                                    0.010848};
+
+static final int CELL_SIZE        = 2;
+static final float DECAY_RATE     = 0.05;
+static final float SPREAD_PROB    = 0.157 / 4;
+
+static final float TEMP[][]       = new float [SIM_WIDTH / CELL_SIZE][SIM_HEIGHT / CELL_SIZE];
 
 //Global Variables
-static final float g_cells[][]  = new float [SIM_WIDTH / CELL_SIZE][SIM_HEIGHT / CELL_SIZE];
+static final float g_cells[][]    = new float[SIM_WIDTH / CELL_SIZE][SIM_HEIGHT / CELL_SIZE];
+static final float g_active[]     = new double[25];
 int g_time; //nanoseconds
 float g_py;
 
@@ -34,6 +40,11 @@ void setup()
   for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++)
     for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++)
       g_cells[i][j] = 0;
+      
+  //Initialize data values
+  for(int i = 0; i < 25; i++){
+    
+  }
 }
 void draw()
 {
@@ -139,13 +150,18 @@ void drawBorders(){
   line(SIM_WIDTH, SIM_HEIGHT / 2, 2 * SIM_WIDTH, SIM_HEIGHT / 2);
 }
 
-void drawPlots(int time, int activeCells){
-  int l = time % (SIM_WIDTH / 2);
+void drawPlots(int time, int[] active){
+  int scale = 22;
   
-  if(l != 0) line(SIM_WIDTH + 2 * l - 2, g_py, SIM_WIDTH + 2 * l, SIM_HEIGHT/2 - activeCells / 1.5);
-  fill(0, 30, 255);
-  noStroke();
-  //rect(SIM_WIDTH + 2 * l + 1, 0, SIM_WIDTH + 2 * l + 5, SIM_HEIGHT/2);
-  //ellipse(SIM_WIDTH + 2 * l, SIM_HEIGHT/2 - activeCells / 1.5, 1, 1);
-  g_py = SIM_HEIGHT/2 - activeCells / 1.5;
+  for(int i = 0; i < 25; i++){
+    int l = (time - 1) % (SIM_WIDTH / scale);
+    stroke(0);
+  
+    line(SIM_WIDTH + scale * l, g_py, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - active[i] / 1.5);
+    println("Hi there");
+    //fill(0, 30, 255);
+    //rect(SIM_WIDTH + 2 * l + 1, 0, SIM_WIDTH + 2 * l + 5, SIM_HEIGHT/2);
+    //ellipse(SIM_WIDTH + 2 * l, SIM_HEIGHT/2 - activeCells / 1.5, 1, 1);
+    g_py = SIM_HEIGHT/2 - active[i] / 1.5;
+  }
 }
