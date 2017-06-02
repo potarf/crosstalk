@@ -4,7 +4,11 @@ static final int SIM_HEIGHT = 550;
 
 static final int PULSE_TIME = 25;       
 
-static final int NUM_PHOTONS      = 30000;
+static final int MIN_PHOTONS      = 0;
+static final int MAX_PHOTONS      = 100000;
+static final int STEP_PHOTONS     = 1000;
+static final int SIM_LIVES = 30 * PULSE_TIME;
+
 static final float LANDAU_DIST[]  = {0.00181951, 0.00923092, 0.0259625, 0.0487989, 0.0698455, 0.0833084,
                                     0.0880665, 0.0860273, 0.079872, 0.0718294, 0.0633677, 0.0553056,
                                     0.0480232, 0.0416416, 0.0361452, 0.031455, 0.0274701, 0.024088,
@@ -22,6 +26,7 @@ static final float g_cells[][]    = new float[SIM_WIDTH / CELL_SIZE][SIM_HEIGHT 
 static final double g_active[]     = new double[PULSE_TIME];
 int g_time; //nanoseconds
 float g_py;
+int g_numPhotons      = MIN_PHOTONS;
 
 void setup()
 {
@@ -34,7 +39,6 @@ void setup()
   // Initialize global values
   
   g_time = -1;
-  g_py = 0;
   
   // Initialize cells
   for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++)
@@ -60,10 +64,30 @@ void draw()
   drawBorders();
   drawCells(g_cells);
   drawPlots(g_active);
+  if(g_time == SIM_LIVES){
+    println(pulseActivity(g_active));
+
+    if(g_numPhotons == MAX_PHOTONS){
+      exit();
+    }
+
+    g_numPhotons += STEP_PHOTONS;
+
+    g_time = 0;
+    // Initialize cells
+    for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++)
+      for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++)
+        g_cells[i][j] = 0;
+      
+      //Initialize data values
+      for(int i = 0; i < PULSE_TIME; i++)
+        g_active[i] = 0;
+  }
+  float activeTot = pulseActivity(g_active);
 }
 
 void pulse(float[][] cells, int time){
-  int numPhotonsPulse = (int)(LANDAU_DIST[time] * NUM_PHOTONS);//(int) random(5000);
+  int numPhotonsPulse = (int)(LANDAU_DIST[time] * g_numPhotons);//(int) random(5000);
   for(int i = 0; i < numPhotonsPulse; i++){
     int x = (int)random(SIM_WIDTH/CELL_SIZE);
     int y = (int)random(SIM_HEIGHT/CELL_SIZE);
@@ -150,8 +174,7 @@ void drawBorders(){
 
 void drawPlots(double[] active){
   int scale = 22;
-  float totalArea = 0;
-  float numScale = 275.0 / NUM_PHOTONS * 6;
+  float numScale = 275.0 / g_numPhotons * 6;
   float landScale = numScale;
   
   for(int i = 0; i < PULSE_TIME; i++){
@@ -164,17 +187,14 @@ void drawPlots(double[] active){
   
     if(i != PULSE_TIME - 1){
       line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)active[i + 1] * numScale);
-      totalArea += 0.5 * (active[i] + active[i + 1]);
       stroke(0, 30, 255);
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * NUM_PHOTONS) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i + 1] * NUM_PHOTONS) * landScale);
+      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i + 1] * g_numPhotons) * landScale);
     } else{
       line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)active[0] * numScale);
-      totalArea += 0.5 * (active[i] + active[0]);
       stroke(0, 30, 255);
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * NUM_PHOTONS) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[0] * NUM_PHOTONS) * landScale);
+      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[0] * g_numPhotons) * landScale);
     }
   }
-  println(totalArea);
 }
 
 void updateActiveCells(int time, double[] active, float[][] cells){
@@ -195,4 +215,17 @@ void updateActiveCells(int time, double[] active, float[][] cells){
   }
 
   active[loc] = (double)(active[loc] * iteration + activeCells) / (double)(iteration + 1);
+}
+
+float pulseActivity(double[] active){
+  float totalArea = 0;
+  for(int i = 0; i < PULSE_TIME; i++){
+    if(i != PULSE_TIME - 1){
+      totalArea += 0.5 * (active[i] + active[i + 1]);
+    } else{
+      totalArea += 0.5 * (active[i] + active[0]);
+    }
+  }
+
+  return totalArea;
 }
