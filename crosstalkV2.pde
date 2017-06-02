@@ -50,15 +50,7 @@ void draw()
   // Draw things
   drawBorders();
   drawCells(g_cells);
-  
-  int l = g_time % (SIM_WIDTH / 2);
-  
-  if(l != 0) line(SIM_WIDTH + 2 * l - 2, g_py, SIM_WIDTH + 2 * l, SIM_HEIGHT/2 - activeCells / 1.5);
-  fill(0, 30, 255);
-  noStroke();
-  //rect(SIM_WIDTH + 2 * l + 1, 0, SIM_WIDTH + 2 * l + 5, SIM_HEIGHT/2);
-  //ellipse(SIM_WIDTH + 2 * l, SIM_HEIGHT/2 - activeCells / 1.5, 1, 1);
-  g_py = SIM_HEIGHT/2 - activeCells / 1.5;
+  drawPlots(g_time, activeCells);
 }
 
 void pulse(float[][] cells, int time){
@@ -145,4 +137,15 @@ void drawBorders(){
   stroke(0);
   line(SIM_WIDTH, 0, SIM_WIDTH, SIM_HEIGHT);
   line(SIM_WIDTH, SIM_HEIGHT / 2, 2 * SIM_WIDTH, SIM_HEIGHT / 2);
+}
+
+void drawPlots(int time, int activeCells){
+  int l = time % (SIM_WIDTH / 2);
+  
+  if(l != 0) line(SIM_WIDTH + 2 * l - 2, g_py, SIM_WIDTH + 2 * l, SIM_HEIGHT/2 - activeCells / 1.5);
+  fill(0, 30, 255);
+  noStroke();
+  //rect(SIM_WIDTH + 2 * l + 1, 0, SIM_WIDTH + 2 * l + 5, SIM_HEIGHT/2);
+  //ellipse(SIM_WIDTH + 2 * l, SIM_HEIGHT/2 - activeCells / 1.5, 1, 1);
+  g_py = SIM_HEIGHT/2 - activeCells / 1.5;
 }
