@@ -4,7 +4,7 @@ static final int SIM_HEIGHT = 550;
 
 static final int PULSE_TIME = 25;       
 
-static final int MIN_PHOTONS      = 0;
+static final int MIN_PHOTONS      = 1000;
 static final int MAX_PHOTONS      = 100000;
 static final int STEP_PHOTONS     = 1000;
 static final int SIM_LIVES = 30 * PULSE_TIME;
@@ -27,6 +27,7 @@ static final double g_active[]     = new double[PULSE_TIME];
 int g_time; //nanoseconds
 float g_py;
 int g_numPhotons      = MIN_PHOTONS;
+PrintWriter output;
 
 void setup()
 {
@@ -35,6 +36,9 @@ void setup()
   size(1100, 550);
   background(255);
   noStroke();
+  
+  // Initialize output file
+  output = createWriter("positions.txt"); 
   
   // Initialize global values
   
@@ -65,7 +69,7 @@ void draw()
   drawCells(g_cells);
   drawPlots(g_active);
   if(g_time == SIM_LIVES){
-    println(pulseActivity(g_active));
+    output.println(pulseActivity(g_active));
 
     if(g_numPhotons == MAX_PHOTONS){
       exit();
@@ -84,6 +88,12 @@ void draw()
         g_active[i] = 0;
   }
   float activeTot = pulseActivity(g_active);
+}
+
+void keyPressed() {
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  exit(); // Stops the program
 }
 
 void pulse(float[][] cells, int time){
