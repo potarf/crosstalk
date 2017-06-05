@@ -15,7 +15,7 @@ static final float LANDAU_DIST[]  = {0.00181951, 0.00923092, 0.0259625, 0.048798
                                     0.0212148, 0.0187681, 0.0166778, 0.0148852, 0.0133417, 0.0120071,
                                     0.010848};
 
-static final int CELL_SIZE        = 2;
+static final int CELL_SIZE        = 3;
 static final float DECAY_RATE     = 0.05;
 static final float SPREAD_PROB    = .157 / 4;
 
