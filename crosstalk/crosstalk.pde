@@ -1,5 +1,5 @@
 // Global Constants
-static final int SIM_WIDTH  = 550;
+static final int SIM_DIAM  = 550;
 static final int SIM_HEIGHT = 550;
 
 static final int PULSE_TIME = 25;       
@@ -19,10 +19,10 @@ static final int CELL_SIZE        = 3;
 static final float DECAY_RATE     = 0.05;
 static final float SPREAD_PROB    = .157 / 4;
 
-static final float TEMP[][]       = new float [SIM_WIDTH / CELL_SIZE][SIM_HEIGHT / CELL_SIZE];
+static final float TEMP[][]       = new float [SIM_DIAM / CELL_SIZE][SIM_HEIGHT / CELL_SIZE];
 
 //Global Variables
-static final float g_cells[][]    = new float[SIM_WIDTH / CELL_SIZE][SIM_HEIGHT / CELL_SIZE];
+static final float g_cells[][]    = new float[SIM_DIAM / CELL_SIZE][SIM_HEIGHT / CELL_SIZE];
 static final double g_active[]     = new double[PULSE_TIME];
 int g_time; //nanoseconds
 float g_py;
@@ -44,7 +44,7 @@ void setup(){
   g_time = -1;
   
   // Initialize cells
-  for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++)
+  for(int i = 0; i < SIM_DIAM / CELL_SIZE; i++)
     for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++)
       g_cells[i][j] = 0;
       
@@ -52,6 +52,7 @@ void setup(){
   for(int i = 0; i < PULSE_TIME; i++)
     g_active[i] = 0;
 }
+
 void draw(){
   
   // Update time and environment
@@ -77,7 +78,7 @@ void draw(){
 
     g_time = 0;
     // Initialize cells
-    for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++)
+    for(int i = 0; i < SIM_DIAM / CELL_SIZE; i++)
       for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++)
         g_cells[i][j] = 0;
       
@@ -95,39 +96,51 @@ void keyPressed(){
 }
 
 void pulse(float[][] cells, int time){
+  float center = (SIM_DIAM / CELL_SIZE - 1) / 2.0;
   int numPhotonsPulse = (int)(LANDAU_DIST[time] * g_numPhotons);//(int) random(5000);
   for(int i = 0; i < numPhotonsPulse; i++){
-    int x = (int)random(SIM_WIDTH/CELL_SIZE);
+    int x = (int)random(SIM_DIAM/CELL_SIZE);
     int y = (int)random(SIM_HEIGHT/CELL_SIZE);
+    if((x - center) * (x - center) + (y - center) * (y - center) - SIM_DIAM * SIM_DIAM /  (CELL_SIZE * CELL_SIZE * 4.0) > 0){
+      i--;
+      continue;
+    }
     if(cells[x][y] <= 0) cells[x][y] = 1 + DECAY_RATE / 2.0;
   }
 }
 
 void stepCells(float[][] cells){
-  for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++){
+  float center = (SIM_DIAM / CELL_SIZE - 1) / 2.0;
+  for(int i = 0; i < SIM_DIAM / CELL_SIZE; i++){
     for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++){
       
       TEMP[i][j] = cells[i][j];
       
       if(cells[i][j]  <= 0){
-        
+        float iSq = (i - center) * (i - center);
+        float jSq = (j - center) * (j - center);
+        float rSq = SIM_DIAM * SIM_DIAM / (CELL_SIZE * CELL_SIZE * 4.0);
+        if(iSq + jSq - rSq > 0){
+          continue;
+        }
+		
         // Check if fired from each bordering cell
-        if(i > 0 && cells[i - 1][j] > 1){
+        if((i - center - 1) * (i - center - 1) + jSq - rSq <= 0  && cells[i - 1][j] > 1){
           if(random(1.0) < SPREAD_PROB)
             TEMP[i][j] = 1 + DECAY_RATE + DECAY_RATE / 2.0;
         }
 
-        if(i < SIM_WIDTH / CELL_SIZE - 1 && cells[i + 1][j] > 1){
+        if((i - center + 1) * (i - center + 1) + jSq - rSq <= 0  && cells[i + 1][j] > 1){
           if(random(1.0) < SPREAD_PROB)
             TEMP[i][j] = 1 + DECAY_RATE + DECAY_RATE / 2.0;
         }
         
-        if(j > 0 && cells[i][j - 1] > 1){
+        if(iSq + (j - center - 1) * (j - center - 1) - rSq <= 0 && cells[i][j - 1] > 1){
           if(random(1.0) < SPREAD_PROB)
             TEMP[i][j] = 1 + DECAY_RATE + DECAY_RATE / 2.0;
         }
         
-        if(j < SIM_WIDTH / CELL_SIZE - 1 && cells[i][j + 1] > 1){
+        if(iSq + (j - center + 1) * (j - center + 1) - rSq <= 0 && cells[i][j + 1] > 1){
           if(random(1.0) < SPREAD_PROB)
             TEMP[i][j] = 1 + DECAY_RATE + DECAY_RATE / 2.0;
         }
@@ -135,7 +148,7 @@ void stepCells(float[][] cells){
     }
   }
    
-  for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++){
+  for(int i = 0; i < SIM_DIAM / CELL_SIZE; i++){
     for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++){
       if(cells[i][j] > 0) TEMP[i][j] -= DECAY_RATE;
       cells[i][j] = TEMP[i][j];
@@ -146,7 +159,7 @@ void stepCells(float[][] cells){
 int getActiveCells(float[][] cells){
   int activeCells = 0;
 
-  for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++){
+  for(int i = 0; i < SIM_DIAM / CELL_SIZE; i++){
     
     for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++){
 
@@ -166,7 +179,7 @@ void updateActiveCells(int time, double[] active, float[][] cells){
   int loc = time % 25;
 
 
-  for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++){
+  for(int i = 0; i < SIM_DIAM / CELL_SIZE; i++){
     
     for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++){
     
@@ -194,7 +207,7 @@ float pulseActivity(double[] active){
 
 void drawCells(float[][] cells){
   
-  for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++){
+  for(int i = 0; i < SIM_DIAM / CELL_SIZE; i++){
     
     for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++){
 
@@ -209,8 +222,8 @@ void drawCells(float[][] cells){
 
 void drawBorders(){
   stroke(0);
-  line(SIM_WIDTH, 0, SIM_WIDTH, SIM_HEIGHT);
-  line(SIM_WIDTH, SIM_HEIGHT / 2, 2 * SIM_WIDTH, SIM_HEIGHT / 2);
+  line(SIM_DIAM, 0, SIM_DIAM, SIM_HEIGHT);
+  line(SIM_DIAM, SIM_HEIGHT / 2, 2 * SIM_DIAM, SIM_HEIGHT / 2);
 }
 
 void drawPlots(double[] active){
@@ -219,21 +232,21 @@ void drawPlots(double[] active){
   float landScale = numScale;
   
   for(int i = 0; i < PULSE_TIME; i++){
-    int l = i % (SIM_WIDTH / scale);
+    int l = i % (SIM_DIAM / scale);
     
     fill(255);
     noStroke();
-    rect(SIM_WIDTH + scale * l, 0, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2);
+    rect(SIM_DIAM + scale * l, 0, SIM_DIAM + scale * l + scale, SIM_HEIGHT/2);
     stroke(255, 30, 0);
   
     if(i != PULSE_TIME - 1){
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)active[i + 1] * numScale);
+      line(SIM_DIAM + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_DIAM + scale * l + scale, SIM_HEIGHT/2 - (float)active[i + 1] * numScale);
       stroke(0, 30, 255);
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i + 1] * g_numPhotons) * landScale);
+      line(SIM_DIAM + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_DIAM + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i + 1] * g_numPhotons) * landScale);
     } else{
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)active[0] * numScale);
+      line(SIM_DIAM + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_DIAM + scale * l + scale, SIM_HEIGHT/2 - (float)active[0] * numScale);
       stroke(0, 30, 255);
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[0] * g_numPhotons) * landScale);
+      line(SIM_DIAM + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_DIAM + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[0] * g_numPhotons) * landScale);
     }
   }
 }
