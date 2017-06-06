@@ -29,8 +29,7 @@ float g_py;
 int g_numPhotons      = MIN_PHOTONS;
 PrintWriter output;
 
-void setup()
-{
+void setup(){
   
   // Initialize window
   size(1100, 550);
@@ -53,8 +52,7 @@ void setup()
   for(int i = 0; i < PULSE_TIME; i++)
     g_active[i] = 0;
 }
-void draw()
-{
+void draw(){
   
   // Update time and environment
   g_time++;
@@ -90,7 +88,7 @@ void draw()
   float activeTot = pulseActivity(g_active);
 }
 
-void keyPressed() {
+void keyPressed(){
   output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file
   exit(); // Stops the program
@@ -161,6 +159,39 @@ int getActiveCells(float[][] cells){
   return activeCells;
 }
 
+void updateActiveCells(int time, double[] active, float[][] cells){
+  
+  int activeCells = 0;
+  int iteration = time / 25;
+  int loc = time % 25;
+
+
+  for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++){
+    
+    for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++){
+    
+      if(cells[i][j] > 1){
+        activeCells++;
+      }
+    }
+  }
+
+  active[loc] = (double)(active[loc] * iteration + activeCells) / (double)(iteration + 1);
+}
+
+float pulseActivity(double[] active){
+  float totalArea = 0;
+  for(int i = 0; i < PULSE_TIME; i++){
+    if(i != PULSE_TIME - 1){
+      totalArea += 0.5 * (active[i] + active[i + 1]);
+    } else{
+      totalArea += 0.5 * (active[i] + active[0]);
+    }
+  }
+
+  return totalArea;
+}
+
 void drawCells(float[][] cells){
   
   for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++){
@@ -205,37 +236,4 @@ void drawPlots(double[] active){
       line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[0] * g_numPhotons) * landScale);
     }
   }
-}
-
-void updateActiveCells(int time, double[] active, float[][] cells){
-  
-  int activeCells = 0;
-  int iteration = time / 25;
-  int loc = time % 25;
-
-
-  for(int i = 0; i < SIM_WIDTH / CELL_SIZE; i++){
-    
-    for(int j = 0; j < SIM_HEIGHT / CELL_SIZE; j++){
-    
-      if(cells[i][j] > 1){
-        activeCells++;
-      }
-    }
-  }
-
-  active[loc] = (double)(active[loc] * iteration + activeCells) / (double)(iteration + 1);
-}
-
-float pulseActivity(double[] active){
-  float totalArea = 0;
-  for(int i = 0; i < PULSE_TIME; i++){
-    if(i != PULSE_TIME - 1){
-      totalArea += 0.5 * (active[i] + active[i + 1]);
-    } else{
-      totalArea += 0.5 * (active[i] + active[0]);
-    }
-  }
-
-  return totalArea;
 }
