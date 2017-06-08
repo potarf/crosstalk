@@ -7,7 +7,10 @@ class Sipm{
   private int numActive;
   private double curCharge;
 
-  Sipm(int xPos, int yPos, int diameter, int pixSize){
-    
+  Sipm(int xPos, int yPos, int diameter, int pixScale){
+    this.pixScale = pixScale;
+    this.diameter = diameter;
+
+    cells = new Cell[diameter][diameter];
   }
 }
