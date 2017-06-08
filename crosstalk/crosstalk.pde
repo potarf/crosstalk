@@ -246,8 +246,6 @@ float pulseActivity(float[] active){
   g_areaMean  = (g_areaMean * g_areaElements + totalArea)/(g_areaElements + 1);
   g_areaElements++;
   g_areaSig   = (g_areaSqSum - 2 * g_areaMean * g_areaSum + g_areaElements * g_areaMean * g_areaMean) / g_areaElements;
-  println(g_areaSig);
-  
   
   return totalArea;
 }
@@ -283,20 +281,20 @@ void drawPlots(float[] active){
     
     fill(255);
     noStroke();
-    rect(SIM_WIDTH + scale * l, 0, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2);
+    rect(SIM_WIDTH + scale * l + 1, 0, scale, SIM_HEIGHT/2);
     
     stroke(0, 0, 0);
     line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale + sqrt(g_actSig[i]), SIM_WIDTH + scale * l , SIM_HEIGHT/2 - (float)active[i] * numScale - sqrt(g_actSig[i]));
   
     stroke(255, 30, 0);
     if(i != PULSE_TIME - 1){
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)active[i + 1] * numScale);
+      line(SIM_WIDTH + scale * l + 1, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_WIDTH + scale * l + 1 + scale, SIM_HEIGHT/2 - (float)active[i + 1] * numScale);
       stroke(0, 30, 255);
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i + 1] * g_numPhotons) * landScale);
+      line(SIM_WIDTH + scale * l + 1, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + 1 + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i + 1] * g_numPhotons) * landScale);
     } else{
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)active[0] * numScale);
+      line(SIM_WIDTH + scale * l + 1, SIM_HEIGHT/2 - (float)active[i] * numScale, SIM_WIDTH + scale * l + scale + 1, SIM_HEIGHT/2 - (float)active[0] * numScale);
       stroke(0, 30, 255);
-      line(SIM_WIDTH + scale * l, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + scale, SIM_HEIGHT/2 - (float)(LANDAU_DIST[0] * g_numPhotons) * landScale);
+      line(SIM_WIDTH + scale * l + 1, SIM_HEIGHT/2 - (float)(LANDAU_DIST[i] * g_numPhotons) * landScale, SIM_WIDTH + scale * l + scale + 1, SIM_HEIGHT/2 - (float)(LANDAU_DIST[0] * g_numPhotons) * landScale);
     }
   }
 }
@@ -310,9 +308,9 @@ void drawSignal(int active, int time){
   
   int l = i % (SIM_WIDTH / scale);
   
-  fill(255 - time, time, 255 - time);
+  fill(255);
   noStroke();
-  rect(SIM_WIDTH + scale * l, SIM_HEIGHT / 2, SIM_WIDTH + scale * l + scale, SIM_HEIGHT);
+  rect(SIM_WIDTH + scale * l + 1, SIM_HEIGHT / 2 + 1, scale, SIM_HEIGHT / 2);
 
   stroke(255, 30, 0);
   if(i != PULSE_TIME * 2 - 1){
