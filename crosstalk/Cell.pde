@@ -1,3 +1,4 @@
+/*
 class Cell{
   double actStep;
 
@@ -18,4 +19,4 @@ class Cell{
     }
     return cellCharge[step - actStep];
   }
-}
+}*/

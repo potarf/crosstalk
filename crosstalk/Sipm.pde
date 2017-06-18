@@ -1,4 +1,4 @@
-class Sipm{
+/*class Sipm{
   Cell cells[][];
 
   private int diameter;
@@ -13,4 +13,4 @@ class Sipm{
 
     cells = new Cell[diameter][diameter];
   }
-}
+}*/

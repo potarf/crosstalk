@@ -75,7 +75,7 @@ void setup(){
 }
 
 void draw(){
-  println(hi);
+  
   // Update time and environment
   g_time++;
   pulse(g_cells, g_time % PULSE_TIME);
