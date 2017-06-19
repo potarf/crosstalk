@@ -1,16 +1,86 @@
-/*class Sipm{
+class Sipm{
   Cell cells[][];
+  Pulse p;
 
   private int diameter;
-  private int pixScale;
 
   private int numActive;
   private double curCharge;
 
-  Sipm(int xPos, int yPos, int diameter, int pixScale){
-    this.pixScale = pixScale;
+  public Sipm(int diameter, Pulse p){
     this.diameter = diameter;
+    this.p = p;
 
     cells = new Cell[diameter][diameter];
+    
+    double center = (diameter - 1) / 2.0;
+
+    for(int x = 0; x < diameter; x++){
+      for(int y = 0; y < diameter; y++){
+        boolean inCircle = (x - center) * (x - center) + (y - center) * (y - center) - diameter * diameter /  4.0 <= 0;
+        cells[x][y] = new Cell(inCircle);
+      }
+    }
+
   }
-}*/
+
+  void update(){
+    p.pulse(cells);
+    for(int x = 0; x < diameter; x++){
+      for(int y = 0; y < diameter; y++){
+        double spreadProb = cells[x][y].getProb();
+
+        if(x - 1 > 0 && cells[x - 1][y].isValid()){ 
+  		    if(random(1.0) < spreadProb)
+            cells[x - 1][y].activate();
+        }
+
+        if(x + 1 < diameter && cells[x + 1][y].isValid()){ 
+  		    if(random(1.0) < spreadProb)
+            cells[x + 1][y].activate();
+        }
+
+        if(y - 1 > 0 && cells[x][y - 1].isValid()){ 
+  		    if(random(1.0) < spreadProb)
+            cells[x][y - 1].activate();
+        }
+
+        if(y + 1 < diameter && cells[x][y + 1].isValid()){ 
+  		    if(random(1.0) < spreadProb)
+            cells[x][y + 1].activate();
+        } 
+      }
+    }
+  }
+
+  void clear(){
+    
+    for(int x = 0; x < diameter; x++){
+      for(int y = 0; y < diameter; y++){
+        cells[x][y].reset();
+      }
+    }
+  }
+
+  PGraphics draw(PGraphics g, int xOr, int yOr, int sideLen){
+
+    float ratio = sideLen / (float) diameter;
+
+    for(int x = 0; x < diameter; x++){
+    
+      for(int y = 0; y < diameter; y++){
+
+        float p = (float)cells[x][y].getLife();
+
+        fill(255 - p*255, 255 - 30 * p, 255 - p * 255);
+        noStroke();
+        rect(xOr + (int)x * ratio,
+             yOr + (int)y * ratio,
+             (int)((x+1) * ratio) - (int)((x) * ratio),
+             (int)((y+1) * ratio) - (int)((y) * ratio));
+      }
+    }
+
+    return g;
+  }
+}

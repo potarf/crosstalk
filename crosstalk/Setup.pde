@@ -6,5 +6,8 @@ static final int PULSE_LEN = 25;
 
 
 //Cell
-static final double CELL_PROB[]   = {};
-static final double CELL_CHARGE[] = {};
+static final int DEAD_TIME = 20;
+static final double CELL_PROB[]   = {0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15};
+static final double CELL_Q[] = {0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15};
+
+final Environment e = new Environment();

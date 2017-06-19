@@ -40,13 +40,17 @@ float g_py;
 int g_numPhotons      = MIN_PHOTONS;
 PrintWriter output;
 
+//////// NEW CODE ///////
+Sipm chip;
+
+
 void setup(){
   
   // Initialize window
   size(1100, 550);
   background(255);
   noStroke();
-  
+
   // Initialize output file
   output = createWriter("positions.txt"); 
   
@@ -72,11 +76,19 @@ void setup(){
   g_areaMean      = 0;
   g_areaElements  = 0;
   g_py = 0;
+
+  /////////// NEW CODE //////////////////
+  Pulse p = new Pulse(1000);
+  chip = new Sipm(SIM_DIAM, p);
+
+
 }
 
 void draw(){
   
   // Update time and environment
+  e.increment();
+  chip.update();
   g_time++;
   pulse(g_cells, g_time % PULSE_TIME);
   int active = updateActiveCells(g_time, g_active, g_cells);
@@ -86,7 +98,8 @@ void draw(){
 
   // Draw things
   drawBorders();
-  drawCells(g_cells);
+  chip.draw(g, 0, 0, 550);
+//  drawCells(g_cells);
   drawPlots(g_active);
   drawSignal(active, g_time);
   
