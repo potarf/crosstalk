@@ -83,4 +83,14 @@ class Sipm{
 
     return g;
   }
+
+  double getCharge(){
+    double total = 0;
+    for(int x = 0; x < diameter; x++){
+      for(int y = 0; y < diameter; y++){
+        total += cells[x][y].getCharge();
+      }
+    }
+    return total;
+  }
 }
