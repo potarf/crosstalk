@@ -10,10 +10,12 @@ float[] current;
 float[] mean;
 float[] variance;
 
+HScrollbar pulseSizeSlider, pulseCenterSlider, pulseSigmaSlider;
+
 void setup(){
   
   // Initialize window
-  size(1100, 550);
+  size(1100, 700);
   background(255);
   noStroke();
 
@@ -21,9 +23,6 @@ void setup(){
   output = createWriter("positions.txt"); 
        
   //Initialize data values
-  
-
-  /////////// NEW CODE //////////////////
   Pulse p   = new Pulse(1000);
   chip      = new Sipm(CELL_DIAM, p);
   pulseData = new Distribution[PULSE_LEN * STEPS_PER_NS];
@@ -34,6 +33,10 @@ void setup(){
   current   = new float[PULSE_LEN * STEPS_PER_NS];
   mean      = new float[PULSE_LEN * STEPS_PER_NS];
   variance  = new float[PULSE_LEN * STEPS_PER_NS];
+  
+  pulseSizeSlider = new HScrollbar(0, SIM_DIAM + 150/2 - 36, SIM_DIAM, 16, 16);
+  pulseCenterSlider = new HScrollbar(0, SIM_DIAM + 150/2, SIM_DIAM, 16, 16);
+  pulseSigmaSlider = new HScrollbar(0, SIM_DIAM + 150/2 + 36, SIM_DIAM, 16, 16);
 
 }
 
@@ -46,6 +49,13 @@ void draw(){
   Plot.drawPlot(g, current, 550, 0, 550, 275, 255, 30, 0);
   Plot.drawPlot(g, mean, 550, 275, 550, 275, 0, 30, 255, true);
   drawBorders();
+  
+  pulseSizeSlider.update();
+  pulseCenterSlider.update();
+  pulseSigmaSlider.update();
+  pulseSizeSlider.display();
+  pulseCenterSlider.display();
+  pulseSigmaSlider.display();
 }
 
 void keyPressed(){
@@ -58,6 +68,7 @@ void drawBorders(){
   stroke(0);
   line(550, 0, 550, 550);
   line(550, 550 / 2, 2 * 550, 550 / 2);
+  line(0, 550, 2 * 550, 550);
 }
 
 void update(){
