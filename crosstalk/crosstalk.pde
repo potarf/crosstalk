@@ -9,6 +9,7 @@ Distribution pulseData[];
 float[] current;
 float[] mean;
 float[] variance;
+float[] input;
 
 void setup(){
   
@@ -24,7 +25,7 @@ void setup(){
   
 
   /////////// NEW CODE //////////////////
-  Pulse p   = new Pulse(1000);
+  Pulse p   = new Pulse(PULSE_SIZE);
   chip      = new Sipm(CELL_DIAM, p);
   pulseData = new Distribution[PULSE_LEN * STEPS_PER_NS];
   for(int i = 0; i < pulseData.length; i++){
@@ -34,7 +35,10 @@ void setup(){
   current   = new float[PULSE_LEN * STEPS_PER_NS];
   mean      = new float[PULSE_LEN * STEPS_PER_NS];
   variance  = new float[PULSE_LEN * STEPS_PER_NS];
-
+  input     = new float[PULSE_LEN * STEPS_PER_NS];
+  for(int i = 0; i < input.length; i++){
+    input[i] = PULSE_DIST[(i - 1 + input.length) % input.length] * PULSE_SIZE; 
+  }
 }
 
 void draw(){
@@ -44,7 +48,8 @@ void draw(){
   // Draw things
   chip.draw(g, 0, 0, 550);
   Plot.drawPlot(g, current, 550, 0, 550, 275, 255, 30, 0);
-  Plot.drawPlot(g, mean, 550, 275, 550, 275, 0, 30, 255, true);
+  Plot.drawPlot(g, input, 550, 275, 550, 275, 0, 255, 30, true);
+  Plot.drawPlot(g, mean, 550, 275, 550, 275, 0, 30, 255, false);
   drawBorders();
 }
 
