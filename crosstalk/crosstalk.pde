@@ -3,7 +3,6 @@ static final int SIM_DIAM = 550;
 static final int CELL_DIAM = 195;
 PrintWriter output;
 
-//////// NEW CODE ///////
 Sipm chip;
 StatDist pulseData[];
 float[] current;
