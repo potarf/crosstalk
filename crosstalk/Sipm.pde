@@ -1,3 +1,4 @@
+import java.util.*;
 class Sipm{
   Cell cells[][];
   Pulse p;
@@ -74,10 +75,10 @@ class Sipm{
 
         fill(255 - p*255, 255 - 30 * p, 255 - p * 255);
         noStroke();
-        rect(xOr + (int)x * ratio,
-             yOr + (int)y * ratio,
-             (int)((x+1) * ratio) - (int)((x) * ratio),
-             (int)((y+1) * ratio) - (int)((y) * ratio));
+        rect(xOr + x * ratio,
+             yOr + y * ratio,
+             ratio,
+             ratio);
       }
     }
 

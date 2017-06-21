@@ -1,4 +1,4 @@
-class Distribution{
+class StatDist{
   private double current;
   private double mean;
   private double sum;
@@ -6,7 +6,7 @@ class Distribution{
   private double variance;
   private int size;
 
-  public Distribution(){
+  public StatDist(){
     current = 0;
     mean = 0;
     variance = 0;

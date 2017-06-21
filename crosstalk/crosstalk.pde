@@ -5,7 +5,7 @@ PrintWriter output;
 
 //////// NEW CODE ///////
 Sipm chip;
-Distribution pulseData[];
+StatDist pulseData[];
 float[] current;
 float[] mean;
 float[] variance;
@@ -33,9 +33,9 @@ void setup(){
   /////////// NEW CODE //////////////////
   Pulse p   = new Pulse(PULSE_SIZE);
   chip      = new Sipm(CELL_DIAM, p);
-  pulseData = new Distribution[PULSE_LEN * STEPS_PER_NS];
+  pulseData = new StatDist[PULSE_LEN * STEPS_PER_NS];
   for(int i = 0; i < pulseData.length; i++){
-    pulseData[i] = new Distribution();
+    pulseData[i] = new StatDist();
   }
 
   current   = new float[PULSE_LEN * STEPS_PER_NS];
