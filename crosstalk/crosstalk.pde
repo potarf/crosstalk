@@ -16,6 +16,8 @@ float center;
 float num_photons;
 
 HScrollbar pulseSizeSlider, pulseCenterSlider, pulseSigmaSlider;
+NormExpression gauss, decayCharge, decayProb;
+Pulse p;
 
 void setup(){
   
@@ -26,9 +28,11 @@ void setup(){
 
   // Initialize output file
   output = createWriter("positions.txt"); 
-       
+  
+  gauss = new GaussianIntNorm(1, 20,0,50,50);
+
   //Initialize data values  
-  Pulse p   = new Pulse(PULSE_SIZE);
+  p   = new Pulse(PULSE_SIZE, gauss);
   chip      = new Sipm(CELL_DIAM, p);
   pulseData = new StatDist[PULSE_LEN * STEPS_PER_NS];
   for(int i = 0; i < pulseData.length; i++){
@@ -45,27 +49,31 @@ void setup(){
 
   input = new float[PULSE_LEN * STEPS_PER_NS];
   for(int i = 0; i < input.length; i++){
-    input[i] = PULSE_DIST[(i - 1 + input.length) % input.length] * PULSE_SIZE; 
+    input[i] =gauss.get(i) * p.getNum();; 
   }
 }
 
 void draw(){
-  // Update time and environment
-  update();
 
-  // Draw things
-  chip.draw(g, 0, 0, 550);
-  Plot.drawPlot(g, current, 550, 0, 550, 275, 255, 30, 0);
-  Plot.drawPlot(g, input, 550, 275, 550, 275, 0, 255, 30, true);
-  Plot.drawPlot(g, mean, 550, 275, 550, 275, 0, 30, 255, false);
-  drawBorders();
-  
   pulseSizeSlider.update();
   pulseCenterSlider.update();
   pulseSigmaSlider.update();
   pulseSizeSlider.display();
   pulseCenterSlider.display();
   pulseSigmaSlider.display();
+
+  ((GaussianIntNorm)gauss).setSigma(pulseSigmaSlider.getValue(1, 25)); 
+  ((GaussianIntNorm)gauss).setMean(pulseCenterSlider.getValue(0, 50));
+  p.setNum((int)pulseSizeSlider.getValue(0,100000));
+  // Update time and environment
+  update();
+
+  // Draw things
+  chip.draw(g, 0, 0, 550);
+  Plot.drawPlot(g, current, 550, 0, 550, 275, 255, 30, 0);
+  float yScale = Plot.drawPlot(g, input, 550, 275, 550, 275, 0, 255, 30);
+  Plot.drawPlot(g, mean, 550, 275, 550, 275, 0, 30, 255, false, true, yScale);
+  drawBorders();
 }
 
 void keyPressed(){
@@ -94,5 +102,6 @@ void update(){
     current[i]  = (float)pulseData[i].getCurrent();
     mean[i]     = (float)pulseData[i].getMean();
     variance[i] = (float)pulseData[i].getVariance();
+    input[i] = gauss.get(i) * p.getNum(); 
   }
 }
