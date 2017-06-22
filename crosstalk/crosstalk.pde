@@ -1,6 +1,5 @@
 // Global Constants
 static final int SIM_DIAM = 550;
-static final int CELL_DIAM = 195;
 PrintWriter output;
 
 Sipm chip;
@@ -16,6 +15,7 @@ HScrollbar pulseSizeSlider, pulseCenterSlider, pulseSigmaSlider;
 HScrollbar t1Slider, t2Slider, t3Slider;
 NormExpression gauss, cellCharge, cellProb;
 Pulse p;
+Environment e;
 
 void setup(){
   
@@ -23,6 +23,7 @@ void setup(){
   size(1110, 700);
   background(255);
   noStroke();
+  e = new Environment();
 
   // Initialize output file
   output = createWriter("positions.txt"); 
@@ -35,22 +36,22 @@ void setup(){
   t2 = 5;
   t3 = 10;
 
-  gauss = new GaussianIntNorm(inSigma, inMean, 0, PULSE_LEN,PULSE_LEN * STEPS_PER_NS);
-  cellCharge = new CellCharge(t1, t2, t3, 0, DEAD_TIME, DEAD_TIME * STEPS_PER_NS);
-  cellProb = new CellProbability(t1, t2, 0, (int)t2, (int)(t2 * STEPS_PER_NS));
+  gauss = new GaussianIntNorm(inSigma, inMean, 0, e.PULSE_LEN,e.PULSE_LEN * e.STEPS_PER_NS);
+  cellCharge = new CellCharge(t1, t2, t3, 0, DEAD_TIME, DEAD_TIME * e.STEPS_PER_NS);
+  cellProb = new CellProbability(t1, t2, 0, (int)t2, (int)(t2 * e.STEPS_PER_NS));
 
 
   //Initialize data values  
-  p   = new Pulse(numPhotons, gauss);
-  chip      = new Sipm(CELL_DIAM, p, cellCharge, cellProb);
-  pulseData = new StatDist[PULSE_LEN * STEPS_PER_NS];
+  p   = new Pulse(numPhotons, gauss, e);
+  chip      = new Sipm(e.CELL_DIAM, p, cellCharge, cellProb, e);
+  pulseData = new StatDist[e.PULSE_LEN * e.STEPS_PER_NS];
   for(int i = 0; i < pulseData.length; i++){
     pulseData[i] = new StatDist();
   }
 
-  current   = new float[PULSE_LEN * STEPS_PER_NS];
-  mean      = new float[PULSE_LEN * STEPS_PER_NS];
-  variance  = new float[PULSE_LEN * STEPS_PER_NS];
+  current   = new float[e.PULSE_LEN * e.STEPS_PER_NS];
+  mean      = new float[e.PULSE_LEN * e.STEPS_PER_NS];
+  variance  = new float[e.PULSE_LEN * e.STEPS_PER_NS];
   
   pulseSizeSlider = new HScrollbar(0, SIM_DIAM + 150/2 - 36, SIM_DIAM, 16, 1);
   pulseCenterSlider = new HScrollbar(0, SIM_DIAM + 150/2, SIM_DIAM, 16, 1);
@@ -59,11 +60,11 @@ void setup(){
   t2Slider = new HScrollbar(SIM_DIAM, SIM_DIAM + 150/2, SIM_DIAM, 16, 1);
   t3Slider = new HScrollbar(SIM_DIAM, SIM_DIAM + 150/2 + 36, SIM_DIAM, 16, 1);
 
-  input = new float[PULSE_LEN * STEPS_PER_NS];
-  pulse = new float[DEAD_TIME * STEPS_PER_NS];
+  input = new float[e.PULSE_LEN * e.STEPS_PER_NS];
+  pulse = new float[DEAD_TIME * e.STEPS_PER_NS];
   for(int i = 0; i < input.length; i++){
     input[i] =gauss.get(i) * p.getNum();
-    if( i < DEAD_TIME * STEPS_PER_NS){
+    if( i < DEAD_TIME * e.STEPS_PER_NS){
       pulse[i] = cellCharge.get(i);
     }
   }
@@ -110,7 +111,7 @@ void update(){
   chip.update();
   
   double curCharge = chip.getCharge();
-  int curStep = e.getStep() % (PULSE_LEN * STEPS_PER_NS);
+  int curStep = e.getStep() % (e.PULSE_LEN * e.STEPS_PER_NS);
 
   pulseData[curStep].add(curCharge);
 
@@ -119,7 +120,7 @@ void update(){
     mean[i]     = (float)pulseData[i].getMean();
     variance[i] = (float)pulseData[i].getVariance();
     input[i] = gauss.get(i) * p.getNum();
-    if( i < DEAD_TIME * STEPS_PER_NS){
+    if( i < DEAD_TIME * e.STEPS_PER_NS){
       pulse[i] = cellCharge.get(i);
     }
   }

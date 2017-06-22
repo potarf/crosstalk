@@ -3,23 +3,26 @@ class Cell{
   private int actStep;
   private int deadSteps;
   private boolean valid;
+  private Environment e;
   private NormExpression charge;
   private NormExpression probability;
 
-  public Cell(boolean valid, NormExpression charge, NormExpression probability){
-    deadSteps = DEAD_TIME * STEPS_PER_NS;
+  public Cell(boolean valid, NormExpression charge, NormExpression probability, Environment e){
+    deadSteps = e.DEAD_TIME * e.STEPS_PER_NS;
     actStep = deadSteps * -1;
     this.valid = valid;
     this.charge = charge;
     this.probability = probability;
+    this.e = e;
   }
   
-  public Cell(NormExpression charge, NormExpression probability){
-    deadSteps = DEAD_TIME * STEPS_PER_NS;
+  public Cell(NormExpression charge, NormExpression probability, Environment e){
+    deadSteps = e.DEAD_TIME * e.STEPS_PER_NS;
     actStep = deadSteps * -1;
     this.valid = true;
     this.charge = charge;
     this.probability = probability;
+    this.e = e;
   }
 
   boolean activate(){

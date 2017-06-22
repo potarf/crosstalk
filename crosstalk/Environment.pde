@@ -1,5 +1,13 @@
 class Environment{
   private int step;
+  
+  //Simulation constants
+  public final int STEPS_PER_NS = 5;
+  public final int PULSE_LEN = 50; 
+  public final int CELL_DIAM = 195;
+  
+  //Cell constants
+  public final int DEAD_TIME = 20;
 
   void Evironment(){
     step = 0;

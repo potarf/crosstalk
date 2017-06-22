@@ -131,7 +131,7 @@ public class CellProbability extends NormExpression{
   public void setT2(float t2){
     if(this.t2 != t2){
       this.t2 = t2;
-      this.numSteps = (int)(t2 * STEPS_PER_NS);
+      this.numSteps = (int)(t2 * e.STEPS_PER_NS);
       updateValues();
     }
   }

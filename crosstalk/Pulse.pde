@@ -2,8 +2,10 @@ class Pulse{
   int numPhotons;
   int startStep;
   NormExpression shape;
+  Environment e;
 
-  public Pulse(int numPhotons, NormExpression shape){
+  public Pulse(int numPhotons, NormExpression shape, Environment e){
+    this.e = e;
     this.numPhotons = numPhotons;
     startStep = e.getStep();
     this.shape = shape;
@@ -11,7 +13,7 @@ class Pulse{
 
   void pulse(Cell[][] cells){
     int diameter = cells.length;
-    int curStep = (e.getStep() - startStep) % (PULSE_LEN * STEPS_PER_NS);
+    int curStep = (e.getStep() - startStep) % (e.PULSE_LEN * e.STEPS_PER_NS);
     int photons = (int)(numPhotons * shape.get(curStep));
 
     for(int i = 0; i < photons; i++){
