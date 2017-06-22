@@ -3,17 +3,23 @@ class Cell{
   private int actStep;
   private int deadSteps;
   private boolean valid;
+  private NormExpression charge;
+  private NormExpression probability;
 
-  public Cell(boolean valid){
+  public Cell(boolean valid, NormExpression charge, NormExpression probability){
     actStep = -1 * CELL_PROB.length;
     deadSteps = DEAD_TIME * STEPS_PER_NS;
     this.valid = valid;
+    this.charge = charge;
+    this.probability = probability;
   }
   
-  public Cell(){
+  public Cell(NormExpression charge, NormExpression probability){
     actStep = -1 * CELL_PROB.length;
     deadSteps = DEAD_TIME * STEPS_PER_NS;
     this.valid = true;
+    this.charge = charge;
+    this.probability = probability;
   }
 
   boolean activate(){
@@ -33,17 +39,11 @@ class Cell{
   }
 
   double getProb(){
-    if(e.getStep() - actStep >= deadSteps || curStep() < 0){
-      return 0;
-    }
-    return CELL_PROB[curStep()];
+    return probability.get(curStep()) * 0.04;
   }
 
   double getCharge(){
-    if(e.getStep() - actStep >= deadSteps || curStep() < 0){
-      return 0;
-    }
-    return CELL_Q[curStep()];
+    return charge.get(curStep());
   }
 
   double getLife(){
