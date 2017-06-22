@@ -75,13 +75,20 @@ public class CellCharge extends NormExpression{
     updateValues();
   }
 
-  public float operation(float val){
-    if(val < t2){
-      return 1 - exp(-val/t1);
-    } else {
-      return (1 - exp(-t2/t1)) * exp(-(val - t2) / t3);
-    }
-  }
+	public float operation(float  val) {
+ 		float t1 = 1;
+		float t2 = 4;
+ 		float t3 = 5;
+ 		float t4 = 15;
+ 		float t5 = 9;
+ 		if(val < t2) {
+   		return 1-exp(-val/t1);
+ 		} else if(val < t4) {
+   		return (1-exp(-t2/t1))*exp(-(val-t2)/t3);
+ 		} else {
+   		return (1-exp(-t2/t1))*exp(-(t4-t2)/t3)*exp(-(val-t4)/t5);
+ 		}
+	}
 
   public void setT1(float t1){
     if(this.t1 != t1){

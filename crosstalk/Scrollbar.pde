@@ -1,44 +1,38 @@
 class HScrollbar {
-  int swidth, sheight;    // width and height of bar
-  float xpos, ypos;       // x and y position of bar
-  float spos, newspos;    // x position of slider
-  float sposMin, sposMax; // max and min values of slider
-  int loose;              // how loose/heavy
+  float barWidth, barHeight;    // width and height of bar
+  float xPos, yPos;       // x and y position of bar
+  
+  float sliderWidth;
+  float sliderPos;    // x position of slider
+  float maxVal, minVal;
+  
   boolean over;           // is the mouse over the slider?
   boolean locked;
-  float ratio;
 
-  HScrollbar (float xp, float yp, int sw, int sh, int l) {
-    swidth = sw;
-    sheight = sh;
-    int widthtoheight = sw - sh;
-    ratio = (float)sw / (float)widthtoheight;
-    xpos = xp;
-    ypos = yp-sheight/2;
-    spos = xpos + swidth/2 - sheight/2;
-    newspos = spos;
-    sposMin = xpos;
-    sposMax = xpos + swidth - sheight;
-    loose = l;
+  HScrollbar (float xPos, float yPos, float barWidth, float barHeight, float minVal, float maxVal, float curVal) {
+    this.xPos = xPos;
+    this.yPos = yPos;
+    this.barWidth = barWidth;
+    this.barHeight = this.sliderWidth = barHeight;
+    this.maxVal = maxVal;
+    this.minVal = minVal;
+    this.sliderPos = (curVal - minVal) / (maxVal - minVal) * barWidth;
   }
 
   void update() {
-    if (overEvent()) {
-      over = true;
-    } else {
-      over = false;
-    }
     if (mousePressed && over) {
       locked = true;
     }
     if (!mousePressed) {
       locked = false;
     }
-    if (locked) {
-      newspos = constrain(mouseX-sheight/2, sposMin, sposMax);
+    if (overEvent() && !mousePressed) {
+      over = true;
+    } else {
+      over = false;
     }
-    if (abs(newspos - spos) > 1) {
-      spos = spos + (newspos-spos)/loose;
+    if (locked) {
+      sliderPos = constrain(mouseX - sliderWidth / 2, 0, barWidth - sliderWidth);
     }
   }
 
@@ -47,8 +41,8 @@ class HScrollbar {
   }
 
   boolean overEvent() {
-    if (mouseX > xpos && mouseX < xpos+swidth &&
-       mouseY > ypos && mouseY < ypos+sheight) {
+    if (mouseX > xPos && mouseX < xPos+barWidth &&
+       mouseY > yPos && mouseY < yPos+barHeight) {
       return true;
     } else {
       return false;
@@ -58,23 +52,23 @@ class HScrollbar {
   void display() {
     noStroke();
     fill(204);
-    rect(xpos, ypos, swidth, sheight);
+    rect(xPos, yPos, barWidth, barHeight);
     if (over || locked) {
       fill(0, 0, 0);
     } else {
       fill(102, 102, 102);
     }
-    rect(spos, ypos, sheight, sheight);
+    rect(sliderPos, yPos, sliderWidth, sliderWidth);
   }
 
   float getPos() {
-    // Convert spos to be values between
+    // Convert sliderPos to be values between
     // 0 and the total width of the scrollbar
-    return spos * ratio;
+    return sliderPos;
   }
   
-  float getValue(float min, float max){
+  float getValue(){
     //Interpolate a value on the scrollbar to a value between given min and max
-    return (spos) * ratio / swidth * (max - min) + min;
+    return (sliderPos - xPos) / (barWidth) * (maxVal - minVal) + minVal;
   }
 }

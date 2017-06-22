@@ -28,16 +28,16 @@ void setup(){
   // Initialize output file
   output = createWriter("positions.txt"); 
   
-  inSigma     = 1;
+  inSigma     = 5;
   inMean      = 20;
-  numPhotons  = 1000;
+  numPhotons  = 10000;
 
   t1 = 1;
   t2 = 5;
   t3 = 10;
 
   gauss = new GaussianIntNorm(inSigma, inMean, 0, e.PULSE_LEN,e.PULSE_LEN * e.STEPS_PER_NS);
-  cellCharge = new CellCharge(t1, t2, t3, 0, DEAD_TIME, DEAD_TIME * e.STEPS_PER_NS);
+  cellCharge = new CellCharge(t1, t2, t3, 0, e.DEAD_TIME, e.DEAD_TIME * e.STEPS_PER_NS);
   cellProb = new CellProbability(t1, t2, 0, (int)t2, (int)(t2 * e.STEPS_PER_NS));
 
 
@@ -53,18 +53,15 @@ void setup(){
   mean      = new float[e.PULSE_LEN * e.STEPS_PER_NS];
   variance  = new float[e.PULSE_LEN * e.STEPS_PER_NS];
   
-  pulseSizeSlider = new HScrollbar(0, SIM_DIAM + 150/2 - 36, SIM_DIAM, 16, 1);
-  pulseCenterSlider = new HScrollbar(0, SIM_DIAM + 150/2, SIM_DIAM, 16, 1);
-  pulseSigmaSlider = new HScrollbar(0, SIM_DIAM + 150/2 + 36, SIM_DIAM, 16, 1);
-  t1Slider = new HScrollbar(SIM_DIAM, SIM_DIAM + 150/2 - 36, SIM_DIAM, 16, 1);
-  t2Slider = new HScrollbar(SIM_DIAM, SIM_DIAM + 150/2, SIM_DIAM, 16, 1);
-  t3Slider = new HScrollbar(SIM_DIAM, SIM_DIAM + 150/2 + 36, SIM_DIAM, 16, 1);
+  pulseSizeSlider = new HScrollbar(0, SIM_DIAM + 150/2 - 42, SIM_DIAM, 16, 0, 100000, numPhotons);
+  pulseCenterSlider = new HScrollbar(0, SIM_DIAM + 150/2 - 8 , SIM_DIAM, 16, 0, e.PULSE_LEN, inMean);
+  pulseSigmaSlider = new HScrollbar(0, SIM_DIAM + 150/2 + 28, SIM_DIAM, 16, .1, 20, inSigma);
 
   input = new float[e.PULSE_LEN * e.STEPS_PER_NS];
-  pulse = new float[DEAD_TIME * e.STEPS_PER_NS];
+  pulse = new float[e.DEAD_TIME * e.STEPS_PER_NS];
   for(int i = 0; i < input.length; i++){
     input[i] =gauss.get(i) * p.getNum();
-    if( i < DEAD_TIME * e.STEPS_PER_NS){
+    if( i < e.DEAD_TIME * e.STEPS_PER_NS){
       pulse[i] = cellCharge.get(i);
     }
   }
@@ -75,15 +72,9 @@ void draw(){
   pulseSizeSlider.update();
   pulseCenterSlider.update();
   pulseSigmaSlider.update();
-  t1Slider.update();
-  t2Slider.update();
-  t3Slider.update();
   pulseSizeSlider.display();
   pulseCenterSlider.display();
   pulseSigmaSlider.display();
-  t1Slider.display();
-  t2Slider.display();
-  t3Slider.display();
 
   updateValues();
   // Update time and environment
@@ -120,7 +111,7 @@ void update(){
     mean[i]     = (float)pulseData[i].getMean();
     variance[i] = (float)pulseData[i].getVariance();
     input[i] = gauss.get(i) * p.getNum();
-    if( i < DEAD_TIME * e.STEPS_PER_NS){
+    if( i < e.DEAD_TIME * e.STEPS_PER_NS){
       pulse[i] = cellCharge.get(i);
     }
   }
@@ -128,20 +119,20 @@ void update(){
 
 void updateValues(){
   
-  if(inSigma != pulseSigmaSlider.getValue(1, 25)){
-    inSigma = pulseSigmaSlider.getValue(1, 25);
+  if(inSigma != pulseSigmaSlider.getValue()){
+    inSigma = pulseSigmaSlider.getValue();
     ((GaussianIntNorm)gauss).setSigma(inSigma); 
     clearStats();
   }
 
-  if(inMean != pulseCenterSlider.getValue(0, 50)){
-    inMean = pulseCenterSlider.getValue(0, 50);
+  if(inMean != pulseCenterSlider.getValue()){
+    inMean = pulseCenterSlider.getValue();
     ((GaussianIntNorm)gauss).setMean(inMean);
     clearStats();
   }
   
-  if(numPhotons != (int)pulseSizeSlider.getValue(0,100000)){
-    numPhotons = (int)pulseSizeSlider.getValue(0,100000);
+  if(numPhotons != (int)pulseSizeSlider.getValue()){
+    numPhotons = (int)pulseSizeSlider.getValue();
     p.setNum(numPhotons);
     clearStats();
   }
