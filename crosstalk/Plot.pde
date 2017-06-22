@@ -16,14 +16,20 @@ static class Plot{
 
     if(clear){
       g.fill(255);
-      g.noStroke();
+      g.stroke(255);
       g.rect(xOr, yOr, w, h);
     }
     
+    g.stroke(r, green, b);
     for(int i = 0; i < size; i++){
-      g.stroke(r, green, b);
       g.line(xOr + i * xScale, yOr + h - data[i] * yScale, xOr + (i + 1) * xScale, yOr + h - data[(i + 1) % size] * yScale);
     }
+    
+    g.stroke(0);
+    g.line(xOr, yOr, xOr + w, yOr);
+    g.line(xOr, yOr + h, xOr + w, yOr + h);
+    g.line(xOr, yOr, xOr, yOr + h);
+    g.line(xOr + w, yOr, xOr + w, yOr + h);
 
     return yScale;
 

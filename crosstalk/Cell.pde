@@ -7,16 +7,16 @@ class Cell{
   private NormExpression probability;
 
   public Cell(boolean valid, NormExpression charge, NormExpression probability){
-    actStep = -1 * CELL_PROB.length;
     deadSteps = DEAD_TIME * STEPS_PER_NS;
+    actStep = deadSteps * -1;
     this.valid = valid;
     this.charge = charge;
     this.probability = probability;
   }
   
   public Cell(NormExpression charge, NormExpression probability){
-    actStep = -1 * CELL_PROB.length;
     deadSteps = DEAD_TIME * STEPS_PER_NS;
+    actStep = deadSteps * -1;
     this.valid = true;
     this.charge = charge;
     this.probability = probability;

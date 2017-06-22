@@ -11,7 +11,7 @@ class Pulse{
 
   void pulse(Cell[][] cells){
     int diameter = cells.length;
-    int curStep = (e.getStep() - startStep) % PULSE_LEN * STEPS_PER_NS;
+    int curStep = (e.getStep() - startStep) % (PULSE_LEN * STEPS_PER_NS);
     int photons = (int)(numPhotons * shape.get(curStep));
 
     for(int i = 0; i < photons; i++){

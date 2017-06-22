@@ -97,9 +97,12 @@ void draw(){
 }
 
 void keyPressed(){
-  output.flush(); // Writes the remaining data to the file
-  output.close(); // Finishes the file
-  exit(); // Stops the program
+  // Closes the program with Esc key
+  if(key == 27){
+    output.flush(); // Writes the remaining data to the file
+    output.close(); // Finishes the file
+    exit();         // Stops the program
+  }
 }
 
 void update(){
@@ -139,23 +142,6 @@ void updateValues(){
   if(numPhotons != (int)pulseSizeSlider.getValue(0,100000)){
     numPhotons = (int)pulseSizeSlider.getValue(0,100000);
     p.setNum(numPhotons);
-    clearStats();
-  }
-  if(t1 != t1Slider.getValue(1, 3)){
-    t1 = t1Slider.getValue(1, 3);
-    ((CellCharge)cellCharge).setT1(t1);
-    ((CellProbability)cellProb).setT1(t1);
-    clearStats();
-  }
-  if(t2 != t2Slider.getValue(0, 10)){
-    t2 = t2Slider.getValue(0, 10);
-    ((CellCharge)cellCharge).setT2(t2);
-    ((CellProbability)cellProb).setT2(t2);
-    clearStats();
-  }
-  if(t3 != t3Slider.getValue(1, 10)){
-    t3 = t3Slider.getValue(1, 10);
-    ((CellCharge)cellCharge).setT3(t3);
     clearStats();
   }
   
