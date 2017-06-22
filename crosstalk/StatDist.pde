@@ -7,10 +7,7 @@ class StatDist{
   private int size;
 
   public StatDist(){
-    current = 0;
-    mean = 0;
-    variance = 0;
-    size = 0;
+    current = mean = sum = sqSum = variance = size = 0;
   }
 
   public void add(double value){
@@ -35,5 +32,9 @@ class StatDist{
 
   public double getVariance(){
     return variance;
+  }
+
+  public void clear(){
+    current = mean = sum = sqSum = variance = size = 0;
   }
 }

@@ -75,6 +75,6 @@ class HScrollbar {
   
   float getValue(float min, float max){
     //Interpolate a value on the scrollbar to a value between given min and max
-    return spos * ratio / swidth * (max - min) + min;
+    return (spos) * ratio / swidth * (max - min) + min;
   }
 }

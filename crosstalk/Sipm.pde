@@ -8,7 +8,7 @@ class Sipm{
   private int numActive;
   private double curCharge;
 
-  public Sipm(int diameter, Pulse p){
+  public Sipm(int diameter, Pulse p, NormExpression cellCharge, NormExpression cellProb){
     this.diameter = diameter;
     this.p = p;
 
@@ -19,7 +19,7 @@ class Sipm{
     for(int x = 0; x < diameter; x++){
       for(int y = 0; y < diameter; y++){
         boolean inCircle = (x - center) * (x - center) + (y - center) * (y - center) - diameter * diameter /  4.0 <= 0;
-        cells[x][y] = new Cell(inCircle);
+        cells[x][y] = new Cell(inCircle, cellCharge, cellProb);
       }
     }
 
