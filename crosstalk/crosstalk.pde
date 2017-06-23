@@ -12,6 +12,7 @@ int numPhotons;
 float t1, t2, t3;
 
 HScrollbar pulseSizeSlider, pulseCenterSlider, pulseSigmaSlider;
+ScrollbarLabel pulseSizeLabel, pulseCenterLabel, pulseSigmaLabel;
 HScrollbar t1Slider, t2Slider, t3Slider;
 NormExpression gauss, cellCharge, cellProb;
 Pulse p;
@@ -24,6 +25,7 @@ void setup(){
   background(255);
   noStroke();
   e = new Environment();
+  
 
   // Initialize output file
   output = createWriter("positions.txt"); 
@@ -53,9 +55,13 @@ void setup(){
   mean      = new float[e.PULSE_LEN * e.STEPS_PER_NS];
   variance  = new float[e.PULSE_LEN * e.STEPS_PER_NS];
   
-  pulseSizeSlider = new HScrollbar(0, SIM_DIAM + 150/2 - 42, SIM_DIAM, 16, 0, 100000, numPhotons);
-  pulseCenterSlider = new HScrollbar(0, SIM_DIAM + 150/2 - 8 , SIM_DIAM, 16, 0, e.PULSE_LEN, inMean);
-  pulseSigmaSlider = new HScrollbar(0, SIM_DIAM + 150/2 + 28, SIM_DIAM, 16, .1, 20, inSigma);
+  pulseSizeSlider = new HScrollbar(0, SIM_DIAM + 32, SIM_DIAM, 16, 0, 100000, numPhotons);
+  pulseCenterSlider = new HScrollbar(0, SIM_DIAM + 64 , SIM_DIAM, 16, 0, e.PULSE_LEN, inMean);
+  pulseSigmaSlider = new HScrollbar(0, SIM_DIAM + 96, SIM_DIAM, 16, .1, 20, inSigma);
+  
+  pulseSizeLabel = new ScrollbarLabel(0, SIM_DIAM + 30, SIM_DIAM, 16, "Pulse Size", "photons", pulseSizeSlider.getValue());
+  pulseCenterLabel = new ScrollbarLabel(0, SIM_DIAM + 62, SIM_DIAM, 16, "Pulse Center", "nanoseconds", pulseCenterSlider.getValue());
+  pulseSigmaLabel = new ScrollbarLabel(0, SIM_DIAM + 94, SIM_DIAM, 16, "Pulse Sigma", "nanoseconds", pulseSigmaSlider.getValue());
 
   input = new float[e.PULSE_LEN * e.STEPS_PER_NS];
   pulse = new float[e.DEAD_TIME * e.STEPS_PER_NS];
@@ -68,13 +74,22 @@ void setup(){
 }
 
 void draw(){
-
+  background(255);
   pulseSizeSlider.update();
   pulseCenterSlider.update();
   pulseSigmaSlider.update();
+  
+  pulseSizeLabel.update(pulseSizeSlider.getValue());
+  pulseCenterLabel.update(pulseCenterSlider.getValue());
+  pulseSigmaLabel.update(pulseSigmaSlider.getValue());
+  
   pulseSizeSlider.display();
   pulseCenterSlider.display();
   pulseSigmaSlider.display();
+  
+  pulseSizeLabel.display();
+  pulseCenterLabel.display();
+  pulseSigmaLabel.display();
 
   updateValues();
   // Update time and environment
