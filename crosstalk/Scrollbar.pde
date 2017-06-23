@@ -72,3 +72,39 @@ class HScrollbar {
     return (sliderPos - xPos) / (barWidth) * (maxVal - minVal) + minVal;
   }
 }
+
+class ScrollbarLabel{
+  int xPosition, yPosition;
+  int labelWidth, labelHeight;
+  PFont f;
+  String title;
+  String units;
+  String value;
+  
+  ScrollbarLabel(int xPosition, int yPosition, int labelWidth, int labelHeight, String title, String units, float value){
+    this.xPosition = xPosition;
+    this.yPosition = yPosition;
+    this.labelWidth = labelWidth;
+    this.labelHeight = labelHeight;
+    this.title = title;
+    this.units = units;
+    this.value = str(value);
+    
+    f = createFont("Arial", 16,true); // Arial, 16 point, anti-aliasing on    
+  }
+  
+  void display(){
+    textFont(f,labelHeight);
+    fill(0);
+    
+    int separation = labelWidth / 5;
+    text(title, separation + xPosition, yPosition);
+    text(value, 2* separation + xPosition, yPosition);
+    text(units, 3 * separation + xPosition, yPosition);
+  }
+  
+  void update(float value){
+    this.value = str(value);
+  }
+  
+}
