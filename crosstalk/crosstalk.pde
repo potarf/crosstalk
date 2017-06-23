@@ -11,6 +11,12 @@ float[] mean;
 float[] variance;
 float[] input;
 
+// Plotter interactive variables
+float sigma;
+float center;
+float num_photons;
+
+
 void setup(){
   
   // Initialize window
