@@ -1,6 +1,7 @@
 class Pulse{
   int numPhotons;
   int startStep;
+  double remainder;
   NormExpression shape;
   Environment e;
 
@@ -9,12 +10,15 @@ class Pulse{
     this.numPhotons = numPhotons;
     startStep = e.getStep();
     this.shape = shape;
+    remainder = 0;
   }
 
   void pulse(Cell[][] cells){
     int diameter = cells.length;
     int curStep = (e.getStep() - startStep) % (e.PULSE_LEN * e.STEPS_PER_NS);
-    int photons = (int)(numPhotons * shape.get(curStep));
+    double actPhot = numPhotons * shape.get(curStep) + remainder;
+    int photons = (int)actPhot;
+    remainder = actPhot - photons;
 
     for(int i = 0; i < photons; i++){
       int x = (int)random(diameter);

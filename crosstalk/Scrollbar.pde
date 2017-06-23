@@ -16,7 +16,7 @@ class HScrollbar {
     this.barHeight = this.sliderWidth = barHeight;
     this.maxVal = maxVal;
     this.minVal = minVal;
-    this.sliderPos = (curVal - minVal) / (maxVal - minVal) * barWidth;
+    this.sliderPos = (curVal - minVal) / (maxVal - minVal) * (barWidth - sliderWidth);
   }
 
   void update() {
@@ -69,7 +69,7 @@ class HScrollbar {
   
   float getValue(){
     //Interpolate a value on the scrollbar to a value between given min and max
-    return (sliderPos - xPos) / (barWidth) * (maxVal - minVal) + minVal;
+    return (sliderPos - xPos) / (barWidth - sliderWidth) * (maxVal - minVal) + minVal;
   }
 }
 

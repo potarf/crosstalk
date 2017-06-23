@@ -7,8 +7,7 @@ StatDist pulseData[];
 float[] current, mean, variance, input, pulse;
 
 // Plotter interactive variables
-float inSigma, inMean;
-int numPhotons;
+float inSigma, inMean, numPhotons;
 
 HScrollbar pulseSizeSlider, pulseCenterSlider, pulseSigmaSlider;
 ScrollbarLabel pulseSizeLabel, pulseCenterLabel, pulseSigmaLabel;
@@ -30,7 +29,7 @@ void setup(){
   
   inSigma     = 5;
   inMean      = 20;
-  numPhotons  = 10000;
+  numPhotons  = log(4000);
 
   gauss = new GaussianIntNorm(inSigma, inMean, 0, e.PULSE_LEN,e.PULSE_LEN * e.STEPS_PER_NS);
   cellCharge = new CellCharge(0, e.DEAD_TIME, e.DEAD_TIME * e.STEPS_PER_NS);
@@ -38,7 +37,7 @@ void setup(){
 
 
   //Initialize data values  
-  p   = new Pulse(numPhotons, gauss, e);
+  p   = new Pulse((int)exp(numPhotons), gauss, e);
   chip      = new Sipm(e.CELL_DIAM, p, cellCharge, cellProb, e);
   pulseData = new StatDist[e.PULSE_LEN * e.STEPS_PER_NS];
   for(int i = 0; i < pulseData.length; i++){
@@ -49,11 +48,11 @@ void setup(){
   mean      = new float[e.PULSE_LEN * e.STEPS_PER_NS];
   variance  = new float[e.PULSE_LEN * e.STEPS_PER_NS];
   
-  pulseSizeSlider = new HScrollbar(0, SIM_DIAM + 32, SIM_DIAM, 16, 0, 100000, numPhotons);
+  pulseSizeSlider = new HScrollbar(0, SIM_DIAM + 32, SIM_DIAM, 16, log(1), log(100000), numPhotons);
   pulseCenterSlider = new HScrollbar(0, SIM_DIAM + 64 , SIM_DIAM, 16, 0, e.PULSE_LEN, inMean);
   pulseSigmaSlider = new HScrollbar(0, SIM_DIAM + 96, SIM_DIAM, 16, .1, 20, inSigma);
   
-  pulseSizeLabel = new ScrollbarLabel(0, SIM_DIAM + 30, SIM_DIAM, 16, "Pulse Size", "photons", pulseSizeSlider.getValue());
+  pulseSizeLabel = new ScrollbarLabel(0, SIM_DIAM + 30, SIM_DIAM, 16, "Pulse Size", "photons", exp(pulseSizeSlider.getValue()));
   pulseCenterLabel = new ScrollbarLabel(0, SIM_DIAM + 62, SIM_DIAM, 16, "Pulse Center", "nanoseconds", pulseCenterSlider.getValue());
   pulseSigmaLabel = new ScrollbarLabel(0, SIM_DIAM + 94, SIM_DIAM, 16, "Pulse Sigma", "nanoseconds", pulseSigmaSlider.getValue());
 
@@ -73,7 +72,7 @@ void draw(){
   pulseCenterSlider.update();
   pulseSigmaSlider.update();
   
-  pulseSizeLabel.update(pulseSizeSlider.getValue());
+  pulseSizeLabel.update(exp(pulseSizeSlider.getValue()));
   pulseCenterLabel.update(pulseCenterSlider.getValue());
   pulseSigmaLabel.update(pulseSigmaSlider.getValue());
   
@@ -91,10 +90,10 @@ void draw(){
 
   // Draw things
   chip.draw(g, 0, 0, 550);
-  Plot.drawPlot(g, current, 550, 0, 550, 150, 255, 30, 0);
-  float yScale = Plot.drawPlot(g, input, 550, 150, 550, 150, 0, 255, 30);
-  Plot.drawPlot(g, mean, 550, 150, 550, 150, 0, 30, 255, false, true, yScale);
-  Plot.drawPlot(g, pulse, 550, 300, 550, 150, 0, 255, 30);
+  Plot.drawPlot(g, current, 550, 0, 550, 200, 255, 30, 0);
+  float yScale = Plot.drawPlot(g, input, 550, 200, 550, 200, 0, 255, 30);
+  Plot.drawPlot(g, mean, 550, 200, 550, 200, 0, 30, 255, false, true, yScale);
+  Plot.drawPlot(g, pulse, 550, 400, 550, 300, 0, 255, 30);
 }
 
 void keyPressed(){
@@ -140,9 +139,9 @@ void updateValues(){
     clearStats();
   }
   
-  if(numPhotons != (int)pulseSizeSlider.getValue()){
-    numPhotons = (int)pulseSizeSlider.getValue();
-    p.setNum(numPhotons);
+  if(numPhotons != pulseSizeSlider.getValue()){
+    numPhotons = pulseSizeSlider.getValue();
+    p.setNum((int)exp(numPhotons));
     clearStats();
   }
   
