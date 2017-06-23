@@ -9,10 +9,8 @@ float[] current, mean, variance, input, pulse;
 // Plotter interactive variables
 float inSigma, inMean;
 int numPhotons;
-float t1, t2, t3;
 
 HScrollbar pulseSizeSlider, pulseCenterSlider, pulseSigmaSlider;
-HScrollbar t1Slider, t2Slider, t3Slider;
 NormExpression gauss, cellCharge, cellProb;
 Pulse p;
 Environment e;
@@ -32,13 +30,9 @@ void setup(){
   inMean      = 20;
   numPhotons  = 10000;
 
-  t1 = 1;
-  t2 = 5;
-  t3 = 10;
-
   gauss = new GaussianIntNorm(inSigma, inMean, 0, e.PULSE_LEN,e.PULSE_LEN * e.STEPS_PER_NS);
-  cellCharge = new CellCharge(t1, t2, t3, 0, e.DEAD_TIME, e.DEAD_TIME * e.STEPS_PER_NS);
-  cellProb = new CellProbability(t1, t2, 0, (int)t2, (int)(t2 * e.STEPS_PER_NS));
+  cellCharge = new CellCharge(0, e.DEAD_TIME, e.DEAD_TIME * e.STEPS_PER_NS);
+  cellProb = new CellProbability(0, e.DEAD_TIME, e.DEAD_TIME * e.STEPS_PER_NS);
 
 
   //Initialize data values  

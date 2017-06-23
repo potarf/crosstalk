@@ -1,4 +1,3 @@
-import java.util.*;
 class Sipm{
   Cell cells[][];
   Pulse p;
@@ -31,27 +30,9 @@ class Sipm{
     p.pulse(cells);
     for(int x = 0; x < diameter; x++){
       for(int y = 0; y < diameter; y++){
-        double spreadProb = cells[x][y].getProb();
-
-        if(x - 1 > 0 && cells[x - 1][y].isValid()){ 
-  		    if(random(1.0) < spreadProb)
-            cells[x - 1][y].activate();
+        if(cells[x][y].isValid()){
+          cells[x][y].updateNeighbors(cells, x, y);
         }
-
-        if(x + 1 < diameter && cells[x + 1][y].isValid()){ 
-  		    if(random(1.0) < spreadProb)
-            cells[x + 1][y].activate();
-        }
-
-        if(y - 1 > 0 && cells[x][y - 1].isValid()){ 
-  		    if(random(1.0) < spreadProb)
-            cells[x][y - 1].activate();
-        }
-
-        if(y + 1 < diameter && cells[x][y + 1].isValid()){ 
-  		    if(random(1.0) < spreadProb)
-            cells[x][y + 1].activate();
-        } 
       }
     }
   }
@@ -72,15 +53,7 @@ class Sipm{
     for(int x = 0; x < diameter; x++){
     
       for(int y = 0; y < diameter; y++){
-
-        float p = (float)cells[x][y].getLife();
-
-        fill(255 - p*255, 255 - 30 * p, 255 - p * 255);
-        noStroke();
-        rect(xOr + x * ratio,
-             yOr + y * ratio,
-             ratio,
-             ratio);
+        cells[x][y].draw(g, xOr + x * ratio, yOr + y * ratio, ratio);
       }
     }
 

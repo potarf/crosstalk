@@ -63,15 +63,9 @@ public class GaussianIntNorm extends NormExpression{
 }
 
 public class CellCharge extends NormExpression{
-  float t1;
-  float t2;
-  float t3;
 
-  public CellCharge(float t1, float t2, float t3, int minimum, int maximum, int numSteps){
+  public CellCharge(int minimum, int maximum, int numSteps){
     super(minimum, maximum, numSteps);
-    this.t1 = t1;
-    this.t2 = t2;
-    this.t3 = t3;
     updateValues();
   }
 
@@ -89,57 +83,35 @@ public class CellCharge extends NormExpression{
    		return (1-exp(-t2/t1))*exp(-(t4-t2)/t3)*exp(-(val-t4)/t5);
  		}
 	}
-
-  public void setT1(float t1){
-    if(this.t1 != t1){
-      this.t1 = t1;
-      updateValues();
-    }
-  }
-
-  public void setT2(float t2){
-    if(this.t2 != t2){
-      this.t2 = t2;
-      updateValues();
-    }
-  }
-
-  public void setT3(float t3){
-    if(this.t3 != t3){
-      this.t3 = t3;
-      updateValues();
-    }
-
-  }
 }
 
 public class CellProbability extends NormExpression{
-  float t1;
-  float t2;
 
-  public CellProbability(float t1, float t2, int minimum, int maximum, int numSteps){
+  public CellProbability(int minimum, int maximum, int numSteps){
     super(minimum, maximum, numSteps);
-    this.t1 = t1;
-    this.t2 = t2;
     updateValues();
   }
 
   public float operation(float val){
-    return 1 - exp(-val/t1);
-  }
+ 		float t1 = 1;
+		float t2 = 4;
 
-  public void setT1(float t1){
-    if(this.t1 != t1){
-      this.t1 = t1;
-      updateValues();
+ 		if(val < t2) {
+   		return 1-exp(-val/t1);
     }
+    return 0;
   }
-
-  public void setT2(float t2){
-    if(this.t2 != t2){
-      this.t2 = t2;
-      this.numSteps = (int)(t2 * e.STEPS_PER_NS);
-      updateValues();
+  
+  protected void updateValues(){
+    float maxima = 0;
+    for(int i = 0; i < values.length; i++){
+      values[i] = operation(minimum + i * (float)(maximum - minimum) / numSteps);
+      if(values[i] > maxima){
+        maxima = values[i];
+      }
+    }
+    for(int i = 0; i < values.length; i++){
+      values[i] /= maxima;
     }
   }
 }

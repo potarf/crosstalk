@@ -22,7 +22,7 @@ class Pulse{
       if(!cells[x][y].isValid()){
         i--;
       } else {
-        cells[x][y].activate();
+        cells[x][y].activate(true);
       }
     }
 
