@@ -123,12 +123,18 @@ public class CellRecharge extends NormExpression{
     updateValues();
   }
 
-  public float operation(float val){
- 		float t1 = 5;
+  
+	public float operation(float val){
+    float t1 = e.RISE_TIME;
+ 		float tRc = 5;
 		float t2 = e.DEAD_TIME;
+  
+    if(val < t1){
+      return 0; 
+    }
 
  		if(val < t2) {
-   		return 1-exp(-val/t1);
+   		return 1-exp(-(val - t1)/tRc);
     }
     return 1;
   }
