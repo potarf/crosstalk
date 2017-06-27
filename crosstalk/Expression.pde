@@ -159,3 +159,32 @@ public class CellRecharge extends NormExpression{
   }
 
 }
+
+public class LightPulse extends NormExpression{
+  public LightPulse(int minimum, int maximum, int numSteps){
+    super(minimum, maximum, numSteps);
+    updateValues();
+  }
+
+  
+	public float operation(float val){
+    float t1 = 0.8;
+ 		float t2 = 4;
+		float t3 = 14;
+    float t4 = 8;
+    float t5 = 6;
+    float t6 = 20;
+    float t7 = 14;
+  
+    if(val < t2){
+      return 1 - exp(-val/t1); 
+    }
+ 		if(val < t4){
+   		return (1 - exp(-t2/t1))*(exp(-(val - t2)/t3));
+    }
+    if(val < t6){
+   		return (1 - exp(-t2/t1))*(exp(-(t4 - t2)/t3)) * (exp(-(val - t4)/t5));
+    }
+    return (1 - exp(-t2/t1))*(exp(-(t4 - t2)/t3)) * (exp(-(t6 - t4)/t5)) * exp(-(val - t6)/t7);
+  }
+}
