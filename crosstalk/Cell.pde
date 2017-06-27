@@ -80,7 +80,7 @@ class Cell{
   }
 
   double getProb(){
-    return probability.get(curStep()) * curCharge() * e.CROSS_PROB;
+    return probability.get(curStep()) * curCharge() * e.getCrossProb();
   }
 
   double getCharge(){

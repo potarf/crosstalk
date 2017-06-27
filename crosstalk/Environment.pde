@@ -9,7 +9,7 @@ class Environment{
   //Cell constants
   public final int RISE_TIME = 4;
   public final int DEAD_TIME = 40;
-  public final float CROSS_PROB = .046;
+  private float crossProb = .046;
 
   void Evironment(){
     step = 0;
@@ -30,5 +30,13 @@ class Environment{
 
   int pulseNum(){
     return (step / STEPS_PER_NS) / PULSE_LEN;
+  }
+  
+  float getCrossProb(){
+    return crossProb;
+  }
+
+  void setCrossProb(float crossProb){
+    this.crossProb = crossProb;
   }
 }
