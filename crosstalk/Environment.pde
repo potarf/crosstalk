@@ -2,12 +2,13 @@ class Environment{
   private int step;
   
   //Simulation constants
-  public final int STEPS_PER_NS = 2;
+  public final int STEPS_PER_NS = 1;
   public final int PULSE_LEN = 50;
   public final int CELL_DIAM = 195;
   
   //Cell constants
-  public final int DEAD_TIME = 20;
+  public final int RISE_TIME = 4;
+  public final int DEAD_TIME = 40;
   public final float CROSS_PROB = .047;
 
   void Evironment(){

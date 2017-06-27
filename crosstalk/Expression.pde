@@ -71,7 +71,7 @@ public class CellCharge extends NormExpression{
 
 	public float operation(float  val) {
  		float t1 = 1;
-		float t2 = 4;
+		float t2 = e.RISE_TIME;
  		float t3 = 5;
  		float t4 = 15;
  		float t5 = 9;
@@ -94,7 +94,7 @@ public class CellProbability extends NormExpression{
 
   public float operation(float val){
  		float t1 = 1;
-		float t2 = 4;
+		float t2 = e.RISE_TIME;
 
  		if(val < t2) {
    		return 1-exp(-val/t1);
@@ -114,4 +114,42 @@ public class CellProbability extends NormExpression{
       values[i] /= maxima;
     }
   }
+}
+
+public class CellRecharge extends NormExpression{
+
+  public CellRecharge(int minimum, int maximum, int numSteps){
+    super(minimum, maximum, numSteps);
+    updateValues();
+  }
+
+  public float operation(float val){
+ 		float t1 = 5;
+		float t2 = e.DEAD_TIME;
+
+ 		if(val < t2) {
+   		return 1-exp(-val/t1);
+    }
+    return 1;
+  }
+
+  protected void updateValues(){
+    float maxima = 0;
+    for(int i = 0; i < values.length; i++){
+      values[i] = operation(minimum + i * (float)(maximum - minimum) / numSteps);
+      if(values[i] > maxima){
+        maxima = values[i];
+      }
+    }
+    for(int i = 0; i < values.length; i++){
+      values[i] /= maxima;
+    }
+  }
+
+  public float get(int step){
+    if(step >= 0 && step < values.length)
+      return values[step];
+    return 1;
+  }
+
 }

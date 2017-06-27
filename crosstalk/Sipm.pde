@@ -8,7 +8,7 @@ class Sipm{
   private int numActive;
   private double curCharge;
 
-  public Sipm(int diameter, Pulse p, NormExpression cellCharge, NormExpression cellProb, Environment e){
+  public Sipm(int diameter, Pulse p, NormExpression cellCharge, NormExpression cellProb, NormExpression cellRecharge, Environment e){
     this.diameter = diameter;
     this.p = p;
     this.e = e;
@@ -20,7 +20,7 @@ class Sipm{
     for(int x = 0; x < diameter; x++){
       for(int y = 0; y < diameter; y++){
         boolean inCircle = (x - center) * (x - center) + (y - center) * (y - center) - diameter * diameter /  4.0 <= 0;
-        cells[x][y] = new Cell(inCircle, cellCharge, cellProb, e);
+        cells[x][y] = new Cell(inCircle, cellCharge, cellProb, cellRecharge, e);
       }
     }
 
@@ -37,14 +37,14 @@ class Sipm{
     }
   }
 
-  void clear(){
+/*  void clear(){
     
     for(int x = 0; x < diameter; x++){
       for(int y = 0; y < diameter; y++){
         cells[x][y].reset();
       }
     }
-  }
+  }*/
 
   PGraphics draw(PGraphics g, int xOr, int yOr, int sideLen){
 

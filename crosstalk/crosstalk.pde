@@ -1,4 +1,4 @@
-// Global Constants
+  // Global Constants
 static final int SIM_DIAM = 550;
 PrintWriter output;
 
@@ -11,7 +11,7 @@ float inSigma, inMean, numPhotons;
 
 HScrollbar pulseSizeSlider, pulseCenterSlider, pulseSigmaSlider;
 ScrollbarLabel pulseSizeLabel, pulseCenterLabel, pulseSigmaLabel;
-NormExpression gauss, cellCharge, cellProb;
+NormExpression gauss, cellCharge, cellProb, cellRecharge;
 Pulse p;
 Environment e;
 
@@ -33,12 +33,13 @@ void setup(){
 
   gauss = new GaussianIntNorm(inSigma, inMean, 0, e.PULSE_LEN,e.PULSE_LEN * e.STEPS_PER_NS);
   cellCharge = new CellCharge(0, e.DEAD_TIME, e.DEAD_TIME * e.STEPS_PER_NS);
-  cellProb = new CellProbability(0, e.DEAD_TIME, e.DEAD_TIME * e.STEPS_PER_NS);
+  cellProb = new CellProbability(0, e.RISE_TIME, e.RISE_TIME * e.STEPS_PER_NS);
+  cellRecharge = new CellRecharge(0, e.DEAD_TIME, e.DEAD_TIME * e.STEPS_PER_NS);
 
 
-  //Initialize data values  
+  //Initialize data values
   p   = new Pulse((int)exp(numPhotons), gauss, e);
-  chip      = new Sipm(e.CELL_DIAM, p, cellCharge, cellProb, e);
+  chip      = new Sipm(e.CELL_DIAM, p, cellCharge, cellProb, cellRecharge, e);
   pulseData = new StatDist[e.PULSE_LEN * e.STEPS_PER_NS];
   for(int i = 0; i < pulseData.length; i++){
     pulseData[i] = new StatDist();
