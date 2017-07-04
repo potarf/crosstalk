@@ -1,3 +1,7 @@
 crosstalk/application.*/*
 *.autosave
 *.txt
+*.dat
+*.png
+*.class
+crosstalk/crosstalk.jar
