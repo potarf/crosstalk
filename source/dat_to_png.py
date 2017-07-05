@@ -13,11 +13,14 @@ import argparse
 # Parse command line arguments #################################################
 ################################################################################
 parser = argparse.ArgumentParser(prog='simpleplotter.py', \
-        usage='%(prog)s [options] file', \
+        usage='%(prog)s [options] file out_dir', \
         description='Simply plot data from a text file.')
         
 parser.add_argument('filename', metavar='file', type=str, \
         help='the input filename')
+
+parser.add_argument('out_directory', metavar='out_dir', type=str, \
+        help='the output directory')
         
 parser.add_argument('--all', action='store_true', \
         help='all data on one plot (default is separate plots)')
@@ -25,6 +28,7 @@ parser.add_argument('--all', action='store_true', \
 args = parser.parse_args()
 onePlot = args.all
 filename = args.filename
+outDir = args.out_directory
 ################################################################################
 
 ################################################################################
@@ -59,5 +63,5 @@ with open(filename, 'r') as infile:
             plt.plot(xValues, yValues[i])
             plt.xlabel(xLabel)
             plt.ylabel(yLabel)
-    plt.savefig("png/" + filename[5:(len(filename) - 4)] + ".png")
+    plt.savefig(outDir + filename[14:(len(filename) - 4)] + ".png")
 ################################################################################

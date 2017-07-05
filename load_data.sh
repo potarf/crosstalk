@@ -1,5 +1,5 @@
-for f in data/*
+for f in data/raw_data/*
 do
  echo "Processing $f"
- ./dat_to_png.py --all $f
+ ./source/dat_to_png.py --all $f data/plots/
 done
