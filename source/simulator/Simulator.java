@@ -1,3 +1,5 @@
+package simulator;
+
 import java.io.PrintWriter; 
 import java.io.IOException;
 import java.lang.Math;
@@ -100,7 +102,72 @@ public class Simulator{
 	    pulseData[i].clear();
 	  }
 	}
-	
+
+  public int getNumPhotons(){
+    return numPhotons;
+  }
+
+  public void setNumPhotons(int numPhotons){
+    p.setNum(numPhotons);
+    this.numPhotons = numPhotons;
+  }
+
+  public int getStepsPerPulse(){
+    return e.PULSE_LEN * e.STEPS_PER_NS;
+  }
+  
+	public double stepToTime(int step){
+    return step / (float)e.STEPS_PER_NS;
+  }
+
+  public double[] getMean(){
+    return mean;
+  }
+
+  public double[] getVariance(){
+    return variance;
+  }
+
+  public double[] getBinning(){
+    return bin;
+  }
+
+  public double[] getPulseShape(){
+    return input;
+  }
+
+  public double getCrossProb(){
+    return e.getCrossProb();
+  }
+
+  public void setCrossProb(double crossProb){
+    e.setCrossProb(crossProb);
+  }
+
+  public int getTimeShift(){
+    return timeShift;
+  }
+
+  public void setTimeShift(int timeShift){
+    this.timeShift = timeShift;
+  }
+
+  public int getDiameter(){
+    return e.CELL_DIAM;
+  }
+
+  public double[][] getNormCellCharge(){
+    return chip.getNormCellCharge();
+  }
+
+  public boolean[][] getIsPulse(){
+    return chip.getIsPulse();
+  }
+
+  public int getStep(){
+    return e.getStep();
+  }
+
 }
 
 class Cell{
@@ -227,6 +294,7 @@ class Cell{
     }
     return actCharge[(actNum - 1) % actStep.length];
   }
+
 
 /*  void reset(){
     actStep = -1 * deadSteps;;
