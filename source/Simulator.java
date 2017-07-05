@@ -2,7 +2,7 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.lang.Math;
 
-public class Crosstalk{
+public class Simulator{
 	
 	  // Global Constants
 	static final int SIM_DIAM = 550;
@@ -14,20 +14,21 @@ public class Crosstalk{
   int granularity;
 	
 	// Plotter interactive variables
-	double numPhotons;
+	int numPhotons;
 	int timeShift;
 	
 	NormExpression gauss, cellCharge, cellProb, cellRecharge;
 	Pulse p;
 	Environment e;
 
-  public Crosstalk(int granularity){
+  public Simulator(int granularity){
     this.granularity = granularity;
   }
 	
 	public void initValues(int numPhotons){
+	  this.numPhotons = numPhotons;
 	  e = new Environment(); 
-    e.STEPS_PER_NS = granularity;
+      e.STEPS_PER_NS = granularity;
 	  timeShift       = 20;
 	
 	  //gauss = new GaussianIntNorm(e.STEPS_PER_NS, timeShift, 0, e.PULSE_LEN,e.PULSE_LEN * e.STEPS_PER_NS);
@@ -145,7 +146,7 @@ class Cell{
     left  = ((double)Math.random() * 1.0f);
     actStep[actNum % actStep.length] = e.getStep() + 1;
     actCharge[actNum % actStep.length] = (double)getRecharge(); 
-    actNum = actNum % actStep.length + 1;
+    actNum = actNum + 1;
     this.isPulse = isPulse;
     return true;
   }
@@ -175,6 +176,14 @@ class Cell{
     }
   }
 
+  public int getDeadSteps(){
+    return deadSteps;
+  }
+
+  public boolean getIsPulse(){
+    return isPulse;
+  }
+
   public boolean isActivated(){
     return curStep() < deadSteps;
   }
@@ -194,7 +203,7 @@ class Cell{
         total += charge.get(e.getStep() - actStep[i]) * actCharge[i];
       }
     }
-    return charge.get(curStep());
+    return total;
   }
 
   public double getRecharge(){
@@ -209,14 +218,14 @@ class Cell{
     if(actNum == 0){
       return e.DEAD_TIME * e.STEPS_PER_NS + 1;
     }
-    return e.getStep() - actStep[actNum - 1];
+    return e.getStep() - actStep[(actNum - 1) % actStep.length];
   }
 
   public double curCharge(){
     if(actNum == 0){
       return 0;
     }
-    return actCharge[actNum - 1];
+    return actCharge[(actNum - 1) % actStep.length];
   }
 
 /*  void reset(){
@@ -344,9 +353,9 @@ class CellCharge extends NormExpression{
  		double t3 = 5;
  		double t4 = 15;
  		double t5 = 9;
- 		if(val < t2) {
+ 		if(val <= t2) {
    		return 1-Math.exp(-val/t1);
- 		} else if(val < t4) {
+ 		} else if(val <= t4) {
    		return (1-Math.exp(-t2/t1))*Math.exp(-(val-t2)/t3);
  		} else {
    		return (1-Math.exp(-t2/t1))*Math.exp(-(t4-t2)/t3)*Math.exp(-(val-t4)/t5);
@@ -438,8 +447,8 @@ class LightPulse extends NormExpression{
   
 	public double operation(double val){
     double t1 = 0.8f;
- 		double t2 = 4;
-		double t3 = 14;
+ 	double t2 = 4;
+	double t3 = 14;
     double t4 = 8;
     double t5 = 6;
     double t6 = 20;
@@ -511,8 +520,10 @@ class Sipm{
 
   private int numActive;
   private double curCharge;
+  private NormExpression cellCharge;
 
   public Sipm(int diameter, Pulse p, NormExpression cellCharge, NormExpression cellProb, NormExpression cellRecharge, Environment e){
+    this.cellCharge = cellCharge;
     this.diameter = diameter;
     this.p = p;
     this.e = e;
@@ -549,6 +560,34 @@ class Sipm{
       }
     }
     return total;
+  }
+
+  public double[][] getNormCellCharge(){
+
+    double charges[][] = new double[diameter][diameter];
+
+    for(int x = 0; x < diameter; x++){
+      for(int y = 0; y < diameter; y++){
+        charges[x][y] = cells[x][y].getCharge() / cellCharge.get(cells[x][y].getDeadSteps());
+      }
+    }
+    return charges;
+  }
+
+  public boolean[][] getIsPulse(){
+
+    boolean isPulses[][] = new boolean[diameter][diameter];
+
+    for(int x = 0; x < diameter; x++){
+      for(int y = 0; y < diameter; y++){
+        isPulses[x][y] = cells[x][y].getIsPulse();
+      }
+    }
+    return isPulses;
+  }
+
+  public int getDiameter(){
+    return diameter;
   }
 }
 

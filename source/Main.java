@@ -10,7 +10,7 @@ public class Main{
 		int step = Integer.valueOf(args[2]);
     int numRuns = Integer.valueOf(args[3]);
     int granularity = Integer.valueOf(args[4]);
-    Crosstalk test = new Crosstalk(granularity);
+    Simulator sim = new Simulator(granularity);
 	  PrintWriter output = null;
 	  
 		for(int i = min; i <= max; i += step){
@@ -21,15 +21,20 @@ public class Main{
 	    } catch (IOException e) {
 	      System.out.println("File cannot open");
 	    }
-      output.println("3 time(ns) charge");
-      test.initValues(i);
+      output.println("4 time(ns) charge");
+      sim.initValues(i);
       
-      for(int times = 0; times < test.e.STEPS_PER_NS * numRuns * test.e.PULSE_LEN; times++){
-        test.update();
+      for(int times = 0; times < sim.e.STEPS_PER_NS * numRuns * sim.e.PULSE_LEN; times++){
+        sim.update();
       }
       
-      for(int j = 0; j < test.current.length; j++){
-	      output.println(j / (float)test.e.STEPS_PER_NS + " " + test.mean[j] + " " + test.variance[j] + " " + test.bin[j]);
+      for(int j = 0; j < sim.current.length; j++){
+	      output.println(j / (float)sim.e.STEPS_PER_NS
+                        + " " + sim.mean[j] 
+                        + " " + sim.variance[j] 
+                        + " " + sim.bin[j] 
+                        + " " + sim.input[j] 
+                        + " " + sim.pulse[j]);
 	    }
       output.close();
       System.out.println(filename);
