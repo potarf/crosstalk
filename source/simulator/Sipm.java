@@ -13,14 +13,16 @@ import java.lang.Math;
  */
 
 class Sipm{
+  
+  // Simulation environmental data
   Cell cells[][];
   Pulse p;
   Environment e;
 
+  // SiPM chip attributes
   private int diameter;
 
-  private int numActive;
-  private double curCharge;
+  // Cell attribute
   private NormExpression cellCharge;
 
   /**
@@ -39,15 +41,17 @@ class Sipm{
               NormExpression cellCharge, NormExpression cellProb,
               NormExpression cellRecharge, Environment e){
     
+    // Set necessary values
     this.cellCharge = cellCharge;
     this.diameter = diameter;
     this.p = p;
     this.e = e;
   
+    // Allocate space for SiPM chip
     cells = new Cell[diameter][diameter];
-      
-    double center = (diameter - 1) / 2.0f;
   
+    // Initialize cells so that any outside of the circle are invalid
+    double center = (diameter - 1) / 2.0f;
     for(int x = 0; x < diameter; x++){
       for(int y = 0; y < diameter; y++){
         boolean inCircle = ((x - center) * (x - center) + 
@@ -61,11 +65,15 @@ class Sipm{
   }
   
   /**
-   * Takes the {@link simulator.Cell} array through a single step, including 
-   * pulse and crosstalk
-   */
+  * Takes the {@link simulator.Cell} array through a single step, including 
+  * pulse and crosstalk
+  */
   public void update(){
+    
+    // Apply a photon pulse
     p.pulse(cells);
+
+    // Apply crosstalk to each cell
     for(int x = 0; x < diameter; x++){
       for(int y = 0; y < diameter; y++){
         if(cells[x][y].isValid()){
@@ -75,7 +83,14 @@ class Sipm{
     }
   }
 
+  /**
+  * Gets the total output charge from the chip
+  *
+  * @return Total output charge
+  */
   public double getCharge(){
+
+    // Sum the output charge from every cell
     double total = 0;
     for(int x = 0; x < diameter; x++){
       for(int y = 0; y < diameter; y++){
@@ -85,6 +100,11 @@ class Sipm{
     return total;
   }
 
+  /**
+  * Gets the normalized output charge from each cell
+  *
+  * @return Normalized charge from each cell
+  */
   public double[][] getNormCellCharge(){
 
     double charges[][] = new double[diameter][diameter];
@@ -98,6 +118,11 @@ class Sipm{
     return charges;
   }
 
+  /**
+  * Gets whether each cell is activated by a pulse
+  *
+  * @return Whether each cell is activated by a pulse
+  */
   public boolean[][] getIsPulse(){
 
     boolean isPulses[][] = new boolean[diameter][diameter];
@@ -110,6 +135,11 @@ class Sipm{
     return isPulses;
   }
 
+  /**
+  * Gets the diameter of the SiPM chip
+  *
+  * @return SiPM diameter
+  */
   public int getDiameter(){
     return diameter;
   }

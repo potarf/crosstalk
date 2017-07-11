@@ -28,7 +28,7 @@ public void initGraphics(){
   pulseSizeSlider   = new HScrollbar(0, SIM_DIAM + 32, SIM_DIAM, 16,
                             log(1), log(1000000), log(sim.getNumPhotons()));
   timeShiftSlider   = new HScrollbar(0, SIM_DIAM + 64 , SIM_DIAM, 16,
-                            0, sim.getStepsPerPulse(), sim.getTimeShift());
+                            0, sim.getStepsPerPulse() - 1, sim.getTimeShift());
   crossProbSlider   = new HScrollbar(0, SIM_DIAM + 96, SIM_DIAM, 16,
                             log(.0001), log(1),
                             log((float)sim.getCrossProb()));

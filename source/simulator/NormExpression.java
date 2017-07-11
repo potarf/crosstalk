@@ -1,20 +1,48 @@
 package simulator;
 import java.lang.Math;
 
+/**
+* The NormExpression class manages a normalized function
+*
+* @author  John Lawrence, Jordan Potarf, Andrew Baas
+* @version 1.0
+* @since   05-07-2017
+*/
 abstract class NormExpression{
 
+  // Cached function values
   protected double[] values;
+
+  // Caching-related variables
   protected int minimum;
   protected int maximum;
   protected int numSteps;
 
+  /**
+  * Constructor takes necessary caching information
+  *
+  * @param minimum  The minimum input expected to be given to the function
+  * @param maximum  The maximum input
+  * @param numSteps The number of steps in caching between the maximum and input
+  */
   public NormExpression(int minimum, int maximum, int numSteps){
+    
+    // Set caching values
     this.minimum = minimum;
     this.maximum = maximum;
     this.numSteps = numSteps;
+    
+    // Allocate space for caching
     values = new double[numSteps];
   }
 
+  /**
+  * Normalizes the function and then caches the values
+  *
+  * @param minimum  The minimum input expected to be given to the function
+  * @param maximum  The maximum input
+  * @param numSteps The number of steps in caching between the maximum and input
+  */
   protected void updateValues(){
     double total = 0;
     for(int i = 0; i < values.length; i++){
@@ -26,18 +54,37 @@ abstract class NormExpression{
     for(int i = 0; i < values.length; i++){
       values[i] /= total;
     }
-    System.out.println(total);
   }
 
+  /**
+  * Retrieves cached values
+  *
+  * @param step Cached step to retrieve (note, not in normal units)
+  * @return The value at the given step
+  */
   public double get(int step){
     if(step >= 0 && step < values.length)
       return values[step];
     return 0;
   }
-  
+ 
+  /**
+  * Gets values directly from the stored function
+  *
+  * @param val Input for function
+  * @return Value of the function at 'val'
+  */ 
   protected abstract double operation(double val);
 }
 
+/**
+* The CellCharge class is a NormExpression which determines the distribution of
+* a Cell's output charge a certain time after activation
+*
+* @author  John Lawrence, Jordan Potarf, Andrew Baas
+* @version 1.0
+* @since   05-07-2017
+*/
 class CellCharge extends NormExpression{
 
   public CellCharge(int minimum, int maximum, int numSteps){
@@ -61,6 +108,14 @@ class CellCharge extends NormExpression{
 	}
 }
 
+/**
+* The CellProbability class is a NormExpression which determines the time
+* distribution of the probability a cell activates a single neighbor
+*
+* @author  John Lawrence, Jordan Potarf, Andrew Baas
+* @version 1.0
+* @since   05-07-2017
+*/
 class CellProbability extends NormExpression{
 
   public CellProbability(int minimum, int maximum, int numSteps){
@@ -92,6 +147,14 @@ class CellProbability extends NormExpression{
   }
 }
 
+/**
+* The CellRecharge class is a NormExpression which determines a Cell's charge a
+* period of time after activation
+*
+* @author  John Lawrence, Jordan Potarf, Andrew Baas
+* @version 1.0
+* @since   05-07-2017
+*/
 class CellRecharge extends NormExpression{
 
   public CellRecharge(int minimum, int maximum, int numSteps){
@@ -136,6 +199,14 @@ class CellRecharge extends NormExpression{
 
 }
 
+/**
+* The LighPulse class is a NormExpression which determines the distribution of
+* photons in a light pulse
+*
+* @author  John Lawrence, Jordan Potarf, Andrew Baas
+* @version 1.0
+* @since   05-07-2017
+*/
 class LightPulse extends NormExpression{
   public LightPulse(int minimum, int maximum, int numSteps){
     super(minimum, maximum, numSteps);

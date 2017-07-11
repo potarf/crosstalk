@@ -113,27 +113,31 @@ public class Simulator{
     // Update the output arrays with the statistical data at the end of each
     // pulse
 	  for(int i = 0; i < pulseData.length; i++){
+      
+      // Adjust the array index by the shift factor for the sake of binning
       int index = (i + timeShift + pulseData.length) %pulseData.length;
       
+      // Update the output from the stats object
       current[index]  = (double)pulseData[i].getCurrent();
       mean[index]     = (double)pulseData[i].getMean();
       variance[index] = (double)pulseData[i].getVariance();
-      input[index]    = lightPulse.get(i) * p.getNum();
+      input[index]    = lightPulse.get(i) * p.getNum(); 
       
-      if( i < e.timeToStep(e.getCellPulseTime())){
-        pulse[i] = cellCharge.get(i);
-      }
-      
+      // Bin the mean signal in 25 ns segments
       int binTime = e.timeToStep(25);
       if(i % binTime == 0){
         double binTot = 0;
+        // Integrate over the last 25 ns
         for(int t = 0; t < binTime; t++){
           binTot += mean[(i - t + pulseData.length) % pulseData.length] / (double)binTime;
         }
+        
+        // Place the data in the bin array
         for(int t = 0; t < binTime; t++){
           bin[(i - t + pulseData.length) % pulseData.length] = binTot;
         }
       }
+
     }
 	}
 	

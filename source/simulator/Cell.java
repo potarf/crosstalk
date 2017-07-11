@@ -30,15 +30,16 @@ class Cell{
   private boolean isPulse;  // Whether the activation was due to a photon pulse
   private double up, right, down, left; // Probability for activating each
                                         //   neighbor
+
   /**
-   * Constructor takes environment data used for the simulation
-   *
-   * @param valid       Whether the cell should be evaluated as a cell
-   * @param charge      Distribution of the output charge over time
-   * @param probability Distribution of the probability of neighbor activation
-   * @param recharge    Distribution of the contained charge after a pulse
-   * @param e           Environment in which the cell exists 
-   */
+  * Constructor takes environment data used for the simulation
+  *
+  * @param valid       Whether the cell should be evaluated as a cell
+  * @param charge      Distribution of the output charge over time
+  * @param probability Distribution of the probability of neighbor activation
+  * @param recharge    Distribution of the contained charge after a pulse
+  * @param e           Environment in which the cell exists 
+  */
   public Cell(boolean valid, NormExpression charge, NormExpression probability,
                 NormExpression recharge, Environment e){
 
