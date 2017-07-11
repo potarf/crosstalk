@@ -4,4 +4,4 @@ crosstalk/application.*/*
 *.dat
 *.png
 *.class
-crosstalk.jar
+*.jar
