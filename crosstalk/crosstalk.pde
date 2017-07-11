@@ -3,10 +3,9 @@ static final int SIM_DIAM = 550;
 PrintWriter output;
 
 float[] current, mean, variance, input, pulse, bin;
-double[] cellCharges;
+double[] cellCharges, time;
 // Plotter interactive variables
 float numPhotons;
-int timeShift;
 
 HScrollbar pulseSizeSlider, timeShiftSlider, crossProbSlider;
 ScrollbarLabel pulseSizeLabel, timeShiftLabel, crossProbLabel;
@@ -14,8 +13,8 @@ simulator.Simulator sim;
 
 void setup(){
   size(1110, 700);
-  sim = new simulator.Simulator(2);
-  sim.initValues(10000);
+  sim = new simulator.Simulator(2, 1000);
+  time = sim.getTime();
   cellCharges = new double[1000];
   initGraphics();
 }
@@ -26,12 +25,19 @@ public void initGraphics(){
   background(255);
   noStroke();
   
-  pulseSizeSlider   = new HScrollbar(0, SIM_DIAM + 32, SIM_DIAM, 16, log(1), log(100000), log(sim.getNumPhotons()));
-  timeShiftSlider   = new HScrollbar(0, SIM_DIAM + 64 , SIM_DIAM, 16, 0, sim.getStepsPerPulse(), timeShift);
-  crossProbSlider   = new HScrollbar(0, SIM_DIAM + 96, SIM_DIAM, 16, log(.0001), log(1), log((float)sim.getCrossProb()));
-
-  pulseSizeLabel  = new ScrollbarLabel(0, SIM_DIAM + 30, SIM_DIAM, 16, "Pulse Size", "photons", exp(pulseSizeSlider.getValue()));
-  timeShiftLabel  = new ScrollbarLabel(0, SIM_DIAM + 62, SIM_DIAM, 16, "Time Shift", "nanoseconds", (float)sim.stepToTime((int)timeShiftSlider.getValue()));
+  pulseSizeSlider   = new HScrollbar(0, SIM_DIAM + 32, SIM_DIAM, 16,
+                            log(1), log(1000000), log(sim.getNumPhotons()));
+  timeShiftSlider   = new HScrollbar(0, SIM_DIAM + 64 , SIM_DIAM, 16,
+                            0, sim.getStepsPerPulse(), sim.getTimeShift());
+  crossProbSlider   = new HScrollbar(0, SIM_DIAM + 96, SIM_DIAM, 16,
+                            log(.0001), log(1),
+                            log((float)sim.getCrossProb()));
+  pulseSizeLabel  = new ScrollbarLabel(0, SIM_DIAM + 30, SIM_DIAM, 16,
+                            "Pulse Size", "photons",
+                            exp(pulseSizeSlider.getValue()));
+  timeShiftLabel  = new ScrollbarLabel(0, SIM_DIAM + 62, SIM_DIAM, 16,
+                            "Time Shift", "nanoseconds",
+                            (float)time[(int)timeShiftSlider.getValue()]);
   crossProbLabel  = new ScrollbarLabel(0, SIM_DIAM + 94, SIM_DIAM, 16, "Crosstalk Prob", "%", 100 * (float)sim.getCrossProb());
 }
 
@@ -42,7 +48,7 @@ void draw(){
   crossProbSlider.update();
   
   pulseSizeLabel.update(exp(pulseSizeSlider.getValue()));
-  timeShiftLabel.update((float)sim.stepToTime((int)timeShiftSlider.getValue())); 
+  timeShiftLabel.update((float)time[(int)timeShiftSlider.getValue()]); 
   crossProbLabel.update(100 * (float)sim.getCrossProb());
 
   pulseSizeSlider.display();
@@ -59,7 +65,7 @@ void draw(){
 
   // Draw things
   drawChip(g, 0, 0, 550);
-  Plot.drawPlot(g, cellCharges, 550, 0, 550, 200, 255, 30, 0);
+  Plot.drawPlot(g, sim.getCurrent(), 550, 0, 550, 200, 255, 30, 0);
   float yScale = Plot.drawPlot(g, sim.getPulseShape(), 550, 200, 550, 200, 0, 255, 30);
   Plot.drawPlot(g, sim.getMean(), 550, 200, 550, 200, 0, 30, 255, false, true, yScale);
   Plot.drawPlot(g, sim.getBinning(), 550, 200, 550, 200, 255, 30, 0, false, true, yScale);

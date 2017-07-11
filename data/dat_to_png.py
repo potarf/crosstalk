@@ -63,5 +63,5 @@ with open(filename, 'r') as infile:
             plt.plot(xValues, yValues[i])
             plt.xlabel(xLabel)
             plt.ylabel(yLabel)
-    plt.savefig(outDir + filename[14:(len(filename) - 4)] + ".png")
+    plt.savefig(outDir + filename[:(len(filename) - 4)] + ".png")
 ################################################################################
