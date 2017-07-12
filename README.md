@@ -75,6 +75,6 @@ Or open the folder 'crosstalk/crosstalk' in the processing IDE
 
 ## Authors
 
-* **John Lawrence** - *Simulation work* - [Potarf](https://github.com/Potarf)
-* **Jordan Potarf** - *Visualization and Simulation work* - [JLawrenc](https://github.com/JLawrenc)
+* **Jordan Potarf** - *Visualization and Simulation work* - [Potarf](https://github.com/Potarf)
+* **John Lawrence** - *Simulation work* - [JLawrenc](https://github.com/JLawrenc)
 * **Master Goldfish** - *Simulation work* - [bosonBaas](https://github.com/bosonBaas)
