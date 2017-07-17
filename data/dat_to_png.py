@@ -37,31 +37,39 @@ outDir = args.out_directory
 with open(filename, 'r') as infile:
     # read file and parse parameters ###########################################
     lines = infile.readlines()
-    numPlots, xLabel, yLabel, = lines[0].split()
+    numPhot, numPlots, xLabel, yLabel, = lines[0].split()
+    labels = lines[1].split()
     numPlots = int(numPlots)
     xValues = []
     yValues = [[] for i in range(numPlots)]
     ############################################################################
     
-    for line in lines [1:]:
+    for line in lines [2:]:
         l = line.split()
         xValues.append(l[0])
         for i in range(numPlots):
-            yValues[i].append(l[i + 1])
+            charge = float(l[i + 1])
+            correction = 1.00669 + \
+                          1.34646 * 10 ** -5 * charge + \
+                          1.57918 * 10 ** -10 * charge * charge;
+            yValues[i].append(charge)
             
-    plt.figure(1)
+    #plt.figure(1)
     if onePlot:
         #plot on one plot
         for i in range(numPlots):
-            plt.plot(xValues, yValues[i])
+            plt.figure(i)
+            plt.plot(xValues, yValues[i], label=labels[i + 1])
             plt.xlabel(xLabel)
             plt.ylabel(yLabel)
+            plt.legend()
     else:
         #plot on multiple subplots
         for i in range(numPlots):
             plt.subplot(211 + i)
-            plt.plot(xValues, yValues[i])
+            plt.plot(xValues, yValues[i], label=labels[i])
             plt.xlabel(xLabel)
             plt.ylabel(yLabel)
     plt.savefig(outDir + filename[:(len(filename) - 4)] + ".png")
+plt.show()
 ################################################################################

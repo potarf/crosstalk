@@ -37,8 +37,8 @@ public class Simulator{
    *
    * @param granularity Steps per nanosecond
    */
-  public Simulator(int granularity, int numPhotons){
-    this.initValues(granularity, numPhotons);
+  public Simulator(int granularity, int numPhotons, int numCells){
+    this.initValues(granularity, numPhotons, numCells);
   }
 	
   /**
@@ -46,10 +46,11 @@ public class Simulator{
    *
    * @param numPhotons Total number of photons in each pulse
    */
-	private void initValues(int granularity, int numPhotons){
+	private void initValues(int granularity, int numPhotons, int numCells){
     
     // Set up the Simulation Environment
-    e         = new Environment(granularity, 150, 195, 4, 40, 0.046);
+    int diameter = (int)Math.sqrt(numCells / Math.PI) * 2;
+    e         = new Environment(granularity, 100, diameter, 4, 40, 0.046);
 	  timeShift = 20;
 	
     // Set up necessary distributions
@@ -224,12 +225,21 @@ public class Simulator{
   }
 
   /**
+   * Gets the shape of the input pulse
+   *
+   * @return Shape of the input pulse
+   */
+  public double[] getPulseShape(){
+    return input;
+  }
+
+  /**
    * Gets the individual pixel response output shape
    *
    * @return Shape of the individual pixel response output
    */
-  public double[] getPulseShape(){
-    return input;
+  public double[] getPixelShape(){
+    return pulse;
   }
 
   /**

@@ -38,7 +38,7 @@ outDir = args.out_file
 
 out = open(outDir, 'w')
 out.write("2 photons charge\n")
-
+ofile = []
 
 for filename in sorted(os.listdir(inDir)):
     with open(os.path.join(inDir,filename), 'r') as infile:
@@ -51,7 +51,9 @@ for filename in sorted(os.listdir(inDir)):
             l = line.split()
             tot1 += float(l[1]);
             tot2 += float(l[4]);
-        out.write(str(numPhotons) + " " + str(tot1) + " " + str(tot2) + "\n")
+        ofile.append([int(numPhotons), tot1, tot2])
 
+for i in sorted(ofile):
+    out.write(str(i[0]) + " " + str(i[1]) + " " + str(i[2]) + '\n')
 out.close();
 ################################################################################

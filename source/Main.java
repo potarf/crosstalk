@@ -27,16 +27,17 @@ public class Main{
 	public static void main(String[] args){
     
     // Get values from terminal arguments
-    int min           = Integer.valueOf(args[0]);
-    int max           = Integer.valueOf(args[1]);
-    int step          = Integer.valueOf(args[2]);
-    int numRuns       = Integer.valueOf(args[3]);
-    int granularity   = Integer.valueOf(args[4]);
+    int min         = Integer.valueOf(args[0]);
+    int max         = Integer.valueOf(args[1]);
+    int step        = Integer.valueOf(args[2]);
+    int numRuns     = Integer.valueOf(args[3]);
+    int granularity = Integer.valueOf(args[4]);
+    int numCells    = Integer.valueOf(args[5]);
     
     // Get output directory
     String directory  = "";
-    if(args.length > 5){
-        directory = args[5];
+    if(args.length > 6){
+        directory = args[6];
     }
 
     // Define the simulator and the output
@@ -56,10 +57,17 @@ public class Main{
       }
       
       // Output first information line
-      output.format("%d 3 time(ns) charge%n", i);
+      output.format("%d 5 time(ns) charge%n", i);
 
+      output.format("%-12s%-12s%-12s%-12s%-12s%-12s%n",
+                              "time",
+                              "mean_output",
+                              "variance",
+                              "binning",
+                              "in_pulse",
+                              "pix_pulse");
       // Initialize the appropriate simulator for this data sample
-      sim = new Simulator(granularity, i);
+      sim = new Simulator(granularity, i, numCells);
 
       // Step the simulator through the appropriate number of iterations
       for(int times = 0; times < sim.getStepsPerPulse() * numRuns; times++){
@@ -68,12 +76,14 @@ public class Main{
 
       // Output data to the data file
       for(int j = 0; j < sim.getStepsPerPulse(); j++){
-        output.format("%-12.4f%-12.4f%-12.4f%-12.4f%-12.4f%n",
+        output.format("%-12.4f%-12.4f%-12.4f%-12.4f%-12.4f%-12.4f%n",
                         sim.getTime()[j],
                         sim.getMean()[j],
                         sim.getVariance()[j],
                         sim.getBinning()[j],
-                        sim.getPulseShape()[j]);
+                        sim.getPulseShape()[j],
+                        sim.getPixelShape()[j]
+                        );
       }
 
       // Close file and print status
