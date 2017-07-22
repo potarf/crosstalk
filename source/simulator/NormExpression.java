@@ -38,16 +38,12 @@ abstract class NormExpression{
 
   /**
   * Normalizes the function and then caches the values
-  *
-  * @param minimum  The minimum input expected to be given to the function
-  * @param maximum  The maximum input
-  * @param numSteps The number of steps in caching between the maximum and input
   */
   protected void updateValues(){
     double total = 0;
     for(int i = 0; i < values.length; i++){
       values[i] = 
-          operation(minimum + i * (double)(maximum - minimum) / numSteps);
+          operation(minimum + i * (double)(maximum - minimum) / (double)numSteps);
       
       total += values[i];
     }
@@ -86,25 +82,31 @@ abstract class NormExpression{
 * @since   05-07-2017
 */
 class CellCharge extends NormExpression{
+ 	private double t1 = .0001;
+	private double t2 = .05;
+ 	private double t3 = .5;
+ 	private double t4 = 5;
+ 	private double t5 = .6;
 
-  public CellCharge(int minimum, int maximum, int numSteps){
+  public CellCharge(int minimum, int maximum, int numSteps, double t1, 
+                    double t2, double t3, double t4, double t5){
     super(minimum, maximum, numSteps);
+    this.t1 = t1;
+    this.t2 = t2;
+    this.t3 = t3;
+    this.t4 = t4;
+    this.t5 = t5;
+
     updateValues();
   }
 
 	protected double operation(double  val) {
- 		double t1 = 1;
-		double t2 = 4;
- 		double t3 = 5;
- 		double t4 = 15;
- 		double t5 = 9;
  		if(val <= t2) {
    		return 1-Math.exp(-val/t1);
- 		} else if(val <= t4) {
-   		return (1-Math.exp(-t2/t1))*Math.exp(-(val-t2)/t3);
  		} else {
-   		return (1-Math.exp(-t2/t1))*Math.exp(-(t4-t2)/t3)*Math.exp(-(val-t4)/t5);
- 		}
+   		return ((t5) * Math.exp(-(val-t2)/t3) + 
+              (1 - t5) * Math.exp(-(val - t2)/t4));
+    }
 	}
 }
 
@@ -117,17 +119,22 @@ class CellCharge extends NormExpression{
 * @since   05-07-2017
 */
 class CellProbability extends NormExpression{
+  
+  private double t1;
+  private double t2;
 
-  public CellProbability(int minimum, int maximum, int numSteps){
+  public CellProbability(int minimum, int maximum, int numSteps, double t1, 
+                          double t2){
     super(minimum, maximum, numSteps);
+    
+    this.t1 = t1;
+    this.t2 = t2;
+
     updateValues();
   }
 
   protected double operation(double val){
- 		double t1 = 1;
-		double t2 = 4;
-
- 		if(val < t2) {
+    if(val <= t2) {
    		return 1-Math.exp(-val/t1);
     }
     return 0;
@@ -136,13 +143,18 @@ class CellProbability extends NormExpression{
   protected void updateValues(){
     double maxima = 0;
     for(int i = 0; i < values.length; i++){
-      values[i] = operation(minimum + i * (double)(maximum - minimum) / numSteps);
+      values[i] = operation(minimum + i * 
+                            (double)(maximum - minimum) / numSteps);
       if(values[i] > maxima){
         maxima = values[i];
       }
     }
-    for(int i = 0; i < values.length; i++){
-      values[i] /= maxima;
+    if(maxima == 0){
+      values[0] = 1;
+    } else {
+      for(int i = 0; i < values.length; i++){
+        values[i] /= maxima;
+      }
     }
   }
 }
@@ -157,14 +169,18 @@ class CellProbability extends NormExpression{
 */
 class CellRecharge extends NormExpression{
 
-  public CellRecharge(int minimum, int maximum, int numSteps){
+  private double t1;
+
+  public CellRecharge(int minimum, int maximum, int numSteps, double t1){
     super(minimum, maximum, numSteps);
+
+    this.t1 = t1;
+    
     updateValues();
   }
 
   
 	protected double operation(double val){
-    double t1 = 4;
  		double tRc = 5;
 		double t2 = 40;
   
@@ -181,7 +197,8 @@ class CellRecharge extends NormExpression{
   protected void updateValues(){
     double maxima = 0;
     for(int i = 0; i < values.length; i++){
-      values[i] = operation(minimum + i * (double)(maximum - minimum) / numSteps);
+      values[i] = operation(minimum + i * 
+                              (double)(maximum - minimum) / numSteps);
       if(values[i] > maxima){
         maxima = values[i];
       }
@@ -215,7 +232,7 @@ class LightPulse extends NormExpression{
 
   
 	protected double operation(double val){
-    double t1 = 0.8f;
+    double t1 = 1.25;
    	double t2 = 4;
   	double t3 = 14;
     double t4 = 8;

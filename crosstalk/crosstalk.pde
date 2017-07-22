@@ -13,7 +13,7 @@ simulator.Simulator sim;
 
 void setup(){
   size(1110, 700);
-  sim = new simulator.Simulator(2, 1000);
+  sim = new simulator.Simulator(2, 1000, 37990, .0001, 3, .5, 5, 0);
   time = sim.getTime();
   cellCharges = new double[1000];
   initGraphics();

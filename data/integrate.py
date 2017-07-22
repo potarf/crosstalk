@@ -9,6 +9,7 @@
 import matplotlib.pyplot as plt
 import argparse
 import os
+import scipy.stats as st
 
 ################################################################################
 # Parse command line arguments #################################################
@@ -23,13 +24,13 @@ parser.add_argument('in_dir', metavar='in_dir', type=str, \
 parser.add_argument('out_file', metavar='out_file', type=str, \
         help='the output file')
         
-parser.add_argument('--all', action='store_true', \
-        help='all data on one plot (default is separate plots)')
+parser.add_argument('-c', '--corrected', action='store_true', \
+        help='apply corrections')
 
 args = parser.parse_args()
-onePlot = args.all
 inDir = args.in_dir
 outDir = args.out_file
+correction = args.corrected
 ################################################################################
 
 ################################################################################
@@ -38,6 +39,9 @@ outDir = args.out_file
 
 out = open(outDir, 'w')
 out.write("2 photons charge\n")
+
+out.write("num_photons charge act_photons\n")
+
 ofile = []
 
 for filename in sorted(os.listdir(inDir)):
@@ -47,13 +51,26 @@ for filename in sorted(os.listdir(inDir)):
         numPhotons = lines[0].split()[0]
         tot1 = tot2 = 0
         
-        for line in lines [1:]:
+        for line in lines [2:]:
             l = line.split()
             tot1 += float(l[1]);
             tot2 += float(l[4]);
+        
+        if correction:
+            tot1 *= 1.00669 + \
+                         1.34646 * 10 ** -5 * tot1 + \
+                         1.57918 * 10 ** -10 * tot1 * tot1;        
         ofile.append([int(numPhotons), tot1, tot2])
 
+xValues = []
+yValues = []
+
 for i in sorted(ofile):
+    xValues.append(i[2])
+    yValues.append(i[1])
     out.write(str(i[0]) + " " + str(i[1]) + " " + str(i[2]) + '\n')
 out.close();
+
+print(st.linregress(xValues, yValues))
+
 ################################################################################

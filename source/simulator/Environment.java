@@ -19,7 +19,7 @@ class Environment{
   private int cellDiam;
   
   //Cell constants
-  private int riseTime;
+  private double riseTime;
   private int cellPulseTime;
   private double crossProb;
   
@@ -35,7 +35,7 @@ class Environment{
   * @param crossProb      Probability of crosstalk between a single cell and a
   *                         single neighbor
   */
-  public Environment(int stepsPerNs, int pulseLen, int cellDiam, int riseTime,
+  public Environment(int stepsPerNs, int pulseLen, int cellDiam, double riseTime,
                      int cellPulseTime, double crossProb){
     
     // Initialize all environment variables
@@ -135,7 +135,7 @@ class Environment{
   * 
   * @return Time after activation where a cell cannot be activated
   */
-  public int getRiseTime(){
+  public double getRiseTime(){
     return riseTime;
   }
 

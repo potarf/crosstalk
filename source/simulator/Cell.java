@@ -54,8 +54,8 @@ class Cell{
     actNum = 0;
       // Note: historical pulses have no effect after their pulse time is up,
       //         so storing them is redundant.
-    actStep   = new int   [e.getCellPulseTime() / e.getRiseTime() + 1];
-    actCharge = new double[e.getCellPulseTime() / e.getRiseTime() + 1];
+    actStep   = new int   [(int)(e.getCellPulseTime() / e.getRiseTime() + 1)];
+    actCharge = new double[(int)(e.getCellPulseTime() / e.getRiseTime() + 1)];
 
     for(int i = 0; i < actStep.length; i++){
       actStep[i] = -1;

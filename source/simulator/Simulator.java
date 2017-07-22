@@ -37,8 +37,9 @@ public class Simulator{
    *
    * @param granularity Steps per nanosecond
    */
-  public Simulator(int granularity, int numPhotons, int numCells){
-    this.initValues(granularity, numPhotons, numCells);
+  public Simulator(int granularity, int numPhotons, int numCells, double t1,
+                    double t2, double t3, double t4, double t5){
+    this.initValues(granularity, numPhotons, numCells, t1, t2, t3, t4, t5);
   }
 	
   /**
@@ -46,22 +47,30 @@ public class Simulator{
    *
    * @param numPhotons Total number of photons in each pulse
    */
-	private void initValues(int granularity, int numPhotons, int numCells){
+	private void initValues(int granularity, int numPhotons, int numCells,
+                          double t1, double t2, double t3, double t4, 
+                          double t5){
     
     // Set up the Simulation Environment
     int diameter = (int)Math.sqrt(numCells / Math.PI) * 2;
-    e         = new Environment(granularity, 100, diameter, 4, 40, 0.046);
+    e         = new Environment(granularity,
+                                100,
+                                diameter,
+                                (t2 > 1.0 / granularity)?t2:(1.0/granularity),
+                                40,
+                                0.046);
 	  timeShift = 20;
 	
     // Set up necessary distributions
 	  lightPulse   = new LightPulse(     0, e.getPulseLen(),
                                         e.timeToStep(e.getPulseLen()));
 	  cellCharge   = new CellCharge(     0, e.getCellPulseTime(),
-                                        e.timeToStep(e.getCellPulseTime()));
-	  cellProb     = new CellProbability(0, e.getRiseTime(),
-                                        e.timeToStep(e.getRiseTime()));
+                                        e.timeToStep(e.getCellPulseTime()), t1,
+                                        t2, t3, t4, t5);
+	  cellProb     = new CellProbability(0, (int)(e.getRiseTime() + 1),
+                                        e.timeToStep(e.getRiseTime()), t1, t2);
 	  cellRecharge = new CellRecharge(   0, e.getCellPulseTime(),
-                                        e.timeToStep(e.getCellPulseTime()));
+                                        e.timeToStep(e.getCellPulseTime()), t1);
 	
 	
 	  // Initialize simulation objects

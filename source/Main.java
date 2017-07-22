@@ -33,11 +33,16 @@ public class Main{
     int numRuns     = Integer.valueOf(args[3]);
     int granularity = Integer.valueOf(args[4]);
     int numCells    = Integer.valueOf(args[5]);
+    double t1       = Double.valueOf(args[6]);
+    double t2       = Double.valueOf(args[7]);
+    double t3       = Double.valueOf(args[8]);
+    double t4       = Double.valueOf(args[9]);
+    double t5       = Double.valueOf(args[10]);
     
     // Get output directory
     String directory  = "";
-    if(args.length > 6){
-        directory = args[6];
+    if(args.length > 11){
+        directory = args[11];
     }
 
     // Define the simulator and the output
@@ -67,7 +72,7 @@ public class Main{
                               "in_pulse",
                               "pix_pulse");
       // Initialize the appropriate simulator for this data sample
-      sim = new Simulator(granularity, i, numCells);
+      sim = new Simulator(granularity, i, numCells, t1, t2, t3, t4, t5);
 
       // Step the simulator through the appropriate number of iterations
       for(int times = 0; times < sim.getStepsPerPulse() * numRuns; times++){
