@@ -40,23 +40,26 @@ class Cell{
   * @param recharge    Distribution of the contained charge after a pulse
   * @param e           Environment in which the cell exists 
   */
-  public Cell(boolean valid, NormExpression charge, NormExpression probability,
-                NormExpression recharge, Environment e){
+  public Cell(boolean valid, Environment e){
 
     // Update class data
-    this.valid = valid;
-    this.charge = charge;
-    this.recharge = recharge;
-    this.probability = probability;
-    this.e = e;
+    this.valid        = valid;
+    this.e            = e;
+    this.charge       = e.getCellCharge();
+    this.recharge     = e.getCellRecharge();
+    this.probability  = e.getCellProb();
 
     // Define and initialize pulse history data
     actNum = 0;
       // Note: historical pulses have no effect after their pulse time is up,
       //         so storing them is redundant.
-    actStep   = new int   [(int)(e.getCellPulseTime() / e.getRiseTime() + 1)];
-    actCharge = new double[(int)(e.getCellPulseTime() / e.getRiseTime() + 1)];
-
+    if(e.getSaturation()){
+      actStep   = new int   [(int)(e.getCellPulseTime() / e.getRiseTime() + 1)];
+      actCharge = new double[(int)(e.getCellPulseTime() / e.getRiseTime() + 1)];
+    }else{
+      actStep   = new int   [(int)(e.timeToStep(e.getCellPulseTime()) * 4)];
+      actCharge = new double[(int)(e.timeToStep(e.getCellPulseTime()) * 4)];
+    }
     for(int i = 0; i < actStep.length; i++){
       actStep[i] = -1;
       actCharge[i] = 0;
@@ -73,7 +76,7 @@ class Cell{
   public boolean activate(boolean isPulse){
     
     // Check if cell is currently in deadtime
-    if(curStep() < getDeadSteps()){
+    if(curStep() < getDeadSteps() && e.getSaturation()){
       return false;
     }
 
@@ -88,7 +91,11 @@ class Cell{
 
     // Add this activation to the histories (overwrite unnecessary histories)
     actStep[actNum % actStep.length] = e.getStep() + 1;
-    actCharge[actNum % actStep.length] = (double)getRecharge(); 
+    if(e.getSaturation()){
+      actCharge[actNum % actStep.length] = (double)getRecharge(); 
+    } else {
+      actCharge[actNum % actStep.length] = 1; 
+    }
     actNum = actNum + 1;
     return true;
   }
@@ -224,4 +231,3 @@ class Cell{
     return actCharge[(actNum - 1) % actStep.length];
   }
 }
-

@@ -100,6 +100,17 @@ parser.add_argument('--t5',
                                 Default is .6'
                     )
 
+parser.add_argument('--noCross',
+                    action  = 'store_true',
+                    help    = 'Sets whether the crosstalk effects are included\
+                                in the simulation.'
+                    )
+
+parser.add_argument('--noSat',
+                    action  = 'store_true',
+                    help    = 'Sets whether the saturation effects are included\
+                                in the simulation.'
+                    )
 
 
 args = parser.parse_args()
@@ -108,8 +119,27 @@ threads = args.threads
 
 proc = []
 
+print(args.noSat)
+print(args.noCross)
+
 for i in range(threads):
   print("Starting " + str(i))
+  print("java -jar dist/crosstalk.jar " + " " +
+                    str(args.min + ( (i *(args.max - args.min)) / (args.step * threads)) * args.step + (0 if (i == 0) else args.step))+" "+
+                    str(args.min + ( (i + 1) * ((args.max - args.min)) / (args.step * threads)) * args.step)+" "+
+                    str(args.step)+" "+
+                    str(args.pulses)+" "+
+                    str(args.granularity)+" "+
+                    str(args.pixels)+" "+
+                    str(args.t1)+" "+
+                    str(args.t2)+" "+
+                    str(args.t3)+" "+
+                    str(args.t4)+" "+
+                    str(args.t5)+" "+
+                    str(os.path.join(args.out_dir, ""))+" "+
+                    ('f' if args.noCross else 't')+" "+
+                    ('f' if args.noSat else 't'));
+
   proc.append(subprocess.Popen(["java", "-jar", "dist/crosstalk.jar",
                     str(args.min + ( (i *(args.max - args.min)) / (args.step * threads)) * args.step + (0 if (i == 0) else args.step)),
                     str(args.min + ( (i + 1) * ((args.max - args.min)) / (args.step * threads)) * args.step),
@@ -122,7 +152,9 @@ for i in range(threads):
                     str(args.t3),
                     str(args.t4),
                     str(args.t5),
-                    str(os.path.join(args.out_dir, ""))]))
+                    str(os.path.join(args.out_dir, "")),
+                    ('f' if args.noCross else 't'),
+                    ('f' if args.noSat else 't')]))
 
 for p in proc:
   p.wait()

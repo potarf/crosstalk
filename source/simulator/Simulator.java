@@ -37,46 +37,14 @@ public class Simulator{
    *
    * @param granularity Steps per nanosecond
    */
-  public Simulator(int granularity, int numPhotons, int numCells, double t1,
-                    double t2, double t3, double t4, double t5){
-    this.initValues(granularity, numPhotons, numCells, t1, t2, t3, t4, t5);
-  }
-	
-  /**
-   * Initializes the necessary environment objects
-   *
-   * @param numPhotons Total number of photons in each pulse
-   */
-	private void initValues(int granularity, int numPhotons, int numCells,
-                          double t1, double t2, double t3, double t4, 
-                          double t5){
+  public Simulator(int numPhotons, Environment e){
+    this.e = e;
     
-    // Set up the Simulation Environment
-    int diameter = (int)Math.sqrt(numCells / Math.PI) * 2;
-    e         = new Environment(granularity,
-                                100,
-                                diameter,
-                                (t2 > 1.0 / granularity)?t2:(1.0/granularity),
-                                40,
-                                0.046);
-	  timeShift = 20;
-	
-    // Set up necessary distributions
-	  lightPulse   = new LightPulse(     0, e.getPulseLen(),
-                                        e.timeToStep(e.getPulseLen()));
-	  cellCharge   = new CellCharge(     0, e.getCellPulseTime(),
-                                        e.timeToStep(e.getCellPulseTime()), t1,
-                                        t2, t3, t4, t5);
-	  cellProb     = new CellProbability(0, (int)(e.getRiseTime() + 1),
-                                        e.timeToStep(e.getRiseTime()), t1, t2);
-	  cellRecharge = new CellRecharge(   0, e.getCellPulseTime(),
-                                        e.timeToStep(e.getCellPulseTime()), t1);
-	
+    timeShift = 20;
 	
 	  // Initialize simulation objects
-	  p          = new Pulse((int)numPhotons, lightPulse, e);
-	  chip       = new Sipm(e.getCellDiam(), p, cellCharge, cellProb,
-                            cellRecharge, e);
+	  p          = new Pulse((int)numPhotons, e);
+	  chip       = new Sipm(p, e);
 
     // Initialize output data values
 	  pulseData = new StatDist[getStepsPerPulse()];
@@ -92,9 +60,9 @@ public class Simulator{
 	  for(int i = 0; i < input.length; i++){
       pulseData[i] = new StatDist();
       time[i]   = e.stepToTime(i);
-	    input[i]  = lightPulse.get(i) * p.getNum();
+	    input[i]  = e.getLightPulse().get(i) * p.getNum();
 	    if( i < e.timeToStep(e.getCellPulseTime())){
-	      pulse[i] = cellCharge.get(i);
+	      pulse[i] = e.getCellCharge().get(i);
 	    } else {
         pulse[i] = 0;
       }
@@ -109,7 +77,7 @@ public class Simulator{
 
     // Steps through simulation time step
 	  e.increment();
-	  chip.update();
+    chip.update();
 	  
     // Collects relevant data
 	  double curCharge = chip.getCharge();
@@ -122,32 +90,34 @@ public class Simulator{
 	
     // Update the output arrays with the statistical data at the end of each
     // pulse
-	  for(int i = 0; i < pulseData.length; i++){
-      
-      // Adjust the array index by the shift factor for the sake of binning
-      int index = (i + timeShift + pulseData.length) %pulseData.length;
-      
-      // Update the output from the stats object
-      current[index]  = (double)pulseData[i].getCurrent();
-      mean[index]     = (double)pulseData[i].getMean();
-      variance[index] = (double)pulseData[i].getVariance();
-      input[index]    = lightPulse.get(i) * p.getNum(); 
-      
-      // Bin the mean signal in 25 ns segments
-      int binTime = e.timeToStep(25);
-      if(i % binTime == 0){
-        double binTot = 0;
-        // Integrate over the last 25 ns
-        for(int t = 0; t < binTime; t++){
-          binTot += mean[(i - t + pulseData.length) % pulseData.length] / (double)binTime;
-        }
+	  if(!e.isBatchJob() || curStep == (getStepsPerPulse() - 1)){
+      for(int i = 0; i < pulseData.length; i++){
         
-        // Place the data in the bin array
-        for(int t = 0; t < binTime; t++){
-          bin[(i - t + pulseData.length) % pulseData.length] = binTot;
+        // Adjust the array index by the shift factor for the sake of binning
+        int index = (i + timeShift + pulseData.length) %pulseData.length;
+        
+        // Update the output from the stats object
+        current[index]  = (double)pulseData[i].getCurrent();
+        mean[index]     = (double)pulseData[i].getMean();
+        variance[index] = (double)pulseData[i].getVariance();
+  	    if(!e.isBatchJob()){
+          input[index]    = e.getLightPulse().get(i) * p.getNum();
+        }
+        // Bin the mean signal in 25 ns segments
+        int binTime = e.timeToStep(25);
+        if(i % binTime == 0){
+          double binTot = 0;
+          // Integrate over the last 25 ns
+          for(int t = 0; t < binTime; t++){
+            binTot += mean[(i - t + pulseData.length) % pulseData.length] / (double)binTime;
+          }
+          
+          // Place the data in the bin array
+          for(int t = 0; t < binTime; t++){
+            bin[(i - t + pulseData.length) % pulseData.length] = binTot;
+          }
         }
       }
-
     }
 	}
 	

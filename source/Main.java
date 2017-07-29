@@ -1,5 +1,6 @@
 import java.util.Formatter;
 import simulator.Simulator;
+import simulator.Environment;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.lang.Math;
@@ -45,13 +46,20 @@ public class Main{
         directory = args[11];
     }
 
+    boolean cross   = args[12].charAt(0) == 't';
+    boolean sat     = args[13].charAt(0) == 't';
+
     // Define the simulator and the output
     Simulator sim;
     Formatter output = null;
-	  
+    Environment env = new Environment(granularity, numCells, 
+                                  100, 40, .046,
+                                  t1, t2, t3, t4, t5,
+                                  sat, cross, true);
+
     // Iterate through each data collection
 		for(int i = min; i <= max; i += step){
-      
+
       // Prepare respective output file
       int offset = (int)(Math.log10(max)) + 1;
       String filename = String.format("%0" + offset + "d_phot.dat", i);
@@ -72,7 +80,7 @@ public class Main{
                               "in_pulse",
                               "pix_pulse");
       // Initialize the appropriate simulator for this data sample
-      sim = new Simulator(granularity, i, numCells, t1, t2, t3, t4, t5);
+      sim = new Simulator(i, env);
 
       // Step the simulator through the appropriate number of iterations
       for(int times = 0; times < sim.getStepsPerPulse() * numRuns; times++){

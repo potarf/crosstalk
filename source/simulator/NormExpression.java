@@ -181,7 +181,7 @@ class CellRecharge extends NormExpression{
 
   
 	protected double operation(double val){
- 		double tRc = 5;
+ 		double tRc = 9;
 		double t2 = 40;
   
     if(val < t1){

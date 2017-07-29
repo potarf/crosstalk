@@ -1,4 +1,3 @@
-
 static final int SIM_DIAM = 550;
 PrintWriter output;
 
@@ -10,10 +9,19 @@ float numPhotons;
 HScrollbar pulseSizeSlider, timeShiftSlider, crossProbSlider;
 ScrollbarLabel pulseSizeLabel, timeShiftLabel, crossProbLabel;
 simulator.Simulator sim;
+double t1       = 0.0001;
+double t2       = 0.05;
+double t3       = 0.5;
+double t4       = 5;
+double t5       = 0.6;
 
 void setup(){
+  simulator.Environment env = new simulator.Environment(3, 33000, 
+                                100, 40, .046,
+                                t1, t2, t3, t4, t5,
+                                true, true, false);
   size(1110, 700);
-  sim = new simulator.Simulator(2, 1000, 37990, .0001, 3, .5, 5, 0);
+  sim = new simulator.Simulator(1000, env);
   time = sim.getTime();
   cellCharges = new double[1000];
   initGraphics();

@@ -28,11 +28,11 @@ class Pulse{
   * @param shape      Distribution of photons in the pulse
   * @param e          The environment of the simulation
   */ 
-  public Pulse(int numPhotons, NormExpression shape, Environment e){
+  public Pulse(int numPhotons, Environment e){
     this.e = e;
     this.numPhotons = numPhotons;
     startStep = e.getStep();
-    this.shape = shape;
+    this.shape = e.getLightPulse();
     remainder = 0;
   }
 
@@ -82,6 +82,5 @@ class Pulse{
   public int getNum(){
     return numPhotons;
   }
-
 }
 

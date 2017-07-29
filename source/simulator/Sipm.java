@@ -37,13 +37,11 @@ class Sipm{
    * @param cellRecharge  Distribution of a {@link simulation.Cell}'s charge
    *                        over the time after last fired.
    */
-  public Sipm(int diameter, Pulse p, 
-              NormExpression cellCharge, NormExpression cellProb,
-              NormExpression cellRecharge, Environment e){
+  public Sipm(Pulse p, Environment e){
     
     // Set necessary values
-    this.cellCharge = cellCharge;
-    this.diameter = diameter;
+    this.cellCharge = e.getCellCharge();
+    this.diameter = e.getCellDiam();
     this.p = p;
     this.e = e;
   
@@ -58,8 +56,7 @@ class Sipm{
                             (y - center) * (y - center) - 
                             diameter * diameter /  4.0f)
                             <= 0;
-        cells[x][y] = new Cell(inCircle, cellCharge,
-                               cellProb, cellRecharge, e);
+        cells[x][y] = new Cell(inCircle, e);
       }
     } 
   }
@@ -72,12 +69,14 @@ class Sipm{
     
     // Apply a photon pulse
     p.pulse(cells);
-
-    // Apply crosstalk to each cell
-    for(int x = 0; x < diameter; x++){
-      for(int y = 0; y < diameter; y++){
-        if(cells[x][y].isValid()){
-          cells[x][y].updateNeighbors(cells, x, y);
+    
+    if(e.getCrosstalk()){
+      // Apply crosstalk to each cell
+      for(int x = 0; x < diameter; x++){
+        for(int y = 0; y < diameter; y++){
+          if(cells[x][y].isValid()){
+            cells[x][y].updateNeighbors(cells, x, y);
+          }
         }
       }
     }
