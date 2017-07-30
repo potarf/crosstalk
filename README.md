@@ -45,10 +45,16 @@ $ ./compile.sh
 
 #### To run the simulator for numerical output
 
-Execute this command with the appropriate arguments
+Execute this command in the base directory with the appropriate arguments
 
 ```Shell
-$ java -jar dist/crosstalk.jar [min_photons] [max_photons] [step_size] [granularity] [runs_per_data_set] [output_folder]
+$ python run_sim.py [args] [output_directory]
+```
+
+In order to get the argument syntax, use:
+
+```Shell
+$ python run_sim.py -h
 ```
 
 For example, to run a simulation with 
@@ -60,7 +66,7 @@ For example, to run a simulation with
 run this code
 
 ```Shell
-$ java -jar dist/crosstalk.jar 1000 50000 1000 3 5 data/raw_data/
+$ python run_sim.py -g 3 -p 5 --min 1000 --max 50000 -s 1000 data/raw_data/
 ```
 
 #### To run the simulator with a live, interactive graphical panel
