@@ -1,27 +1,45 @@
-static final int SIM_DIAM = 550;
-PrintWriter output;
+/**
+* This processing file runs a graphics frontend for the simulation.
+*
+* @author  John Lawrence, Jordan Potarf, Andrew Baas
+* @version 1.0
+* @since   05-07-2017
+*/
 
+
+PrintWriter output;
 float[] current, mean, variance, input, pulse, bin;
 double[] cellCharges, time;
-// Plotter interactive variables
-float numPhotons;
 
 HScrollbar pulseSizeSlider, timeShiftSlider, crossProbSlider;
 ScrollbarLabel pulseSizeLabel, timeShiftLabel, crossProbLabel;
 simulator.Simulator sim;
-double t1       = 0.0001;
-double t2       = 0.05;
-double t3       = 0.5;
-double t4       = 5;
-double t5       = 0.6;
+
+final int SIM_DIAM = 555;
+
+//Simulation constants
+final int GRANLARITY  = 3;
+final int NUM_CELLS   = 37994;
+final int PULSE_LEN   = 100;
+final int C_PULSE_LEN = 40;
+final double  CROSS_PROB  = .046;
+final double  T1 = 0.0001;
+final double  T2 = 0.05;
+final double  T3 = 0.5;
+final double  T4 =  5;
+final double  T5 = 0.6;
+final boolean SATURATION  = true;
+final boolean CROSSTALK   = true;
+final boolean BATCH_JOB   = false;
+final int NUM_PHOTONS = 1000;
 
 void setup(){
-  simulator.Environment env = new simulator.Environment(3, 33000, 
-                                100, 40, .046,
-                                t1, t2, t3, t4, t5,
-                                true, true, false);
+  simulator.Environment env = new simulator.Environment( GRANLARITY, NUM_CELLS, 
+                                PULSE_LEN, C_PULSE_LEN, CROSS_PROB,
+                                T1, T2, T3, T4, T5,
+                                SATURATION, CROSSTALK, BATCH_JOB);
   size(1110, 700);
-  sim = new simulator.Simulator(1000, env);
+  sim = new simulator.Simulator(NUM_PHOTONS, env);
   time = sim.getTime();
   cellCharges = new double[1000];
   initGraphics();
