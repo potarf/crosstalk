@@ -76,6 +76,7 @@ void draw(){
   pulseSizeLabel.update(exp(pulseSizeSlider.getValue()));
   timeShiftLabel.update((float)time[(int)timeShiftSlider.getValue()]); 
   crossProbLabel.update(100 * (float)sim.getCrossProb());
+  //crossProbLabel.update((float)sim.Landau(2, 0, 20));
 
   pulseSizeSlider.display();
   timeShiftSlider.display();
