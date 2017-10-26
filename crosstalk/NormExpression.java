@@ -73,7 +73,10 @@ abstract class NormExpression{
   * @return Value of the function at 'val'
   */ 
   protected abstract double operation(double val);
-
+  
+  /**
+  * This is a function that is half of a landau function
+  */
   public double anotherLandau(double x) {
     double xi = 1;
     double xj = 0;    
@@ -131,6 +134,9 @@ abstract class NormExpression{
     return denlan/xi;
   }
   
+  /**
+  * This function is a landau function using the function above
+  */
   public double Landau(double x, double mu, double sigma) {
     if (sigma <= 0) return 0; 
     Double den = anotherLandau((x-mu)/sigma); 
@@ -296,18 +302,30 @@ class LightPulse extends NormExpression{
     updateValues();
   }
 
-  
+  /**
+  * This is the mathmatical representation of the light pulse
+  */
 	protected double operation(double val){
    double A,n,t0,fit;
-   A=0.104204; 
-   n=0.44064; 
+   //normalization constant
+   A=0.104204;
+   //first exponential constant
+   n=0.44064;
+   //second exponential constant
    t0=10.0186;
+   //exponential constant that is dominate for the first part of the light pulse
    fit = A*(1-Math.exp(-val/n))*Math.exp(-val/t0);
    double norm,mpv,sigma,corTerm;
+   //normalization contant
    norm=0.0806123; 
+   //mean for landau function
    mpv=0; 
+   //standard deviation for landau function
    sigma=20;
+   //Landau function which is dominant for the tail part of the light pulse
    corTerm = norm*Landau(val,mpv,sigma);
+   //fractional constant which normalizes overall function
+   //and weights each individual function
    double frac = 0.13;
    double t = (1-frac)*fit + frac*corTerm;
    if(val >= 0) return t;
