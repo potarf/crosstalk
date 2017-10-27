@@ -99,6 +99,12 @@ parser.add_argument('--t5',
                                 first time constant to the dropoff.\
                                 Default is .6'
                     )
+parser.add_argument('--tRc',
+                    action  = 'store',
+                    default = 9.0,
+                    type    = float,
+                    help    = 'Set time constant of cell recharge'
+                    )
 
 parser.add_argument('--noCross',
                     action  = 'store_true',
@@ -136,6 +142,7 @@ for i in range(threads):
                     str(args.t3)+" "+
                     str(args.t4)+" "+
                     str(args.t5)+" "+
+                    str(args.tRc)+" "+
                     str(os.path.join(args.out_dir, ""))+" "+
                     ('f' if args.noCross else 't')+" "+
                     ('f' if args.noSat else 't'));
@@ -152,6 +159,7 @@ for i in range(threads):
                     str(args.t3),
                     str(args.t4),
                     str(args.t5),
+                    str(args.tRc),
                     str(os.path.join(args.out_dir, "")),
                     ('f' if args.noCross else 't'),
                     ('f' if args.noSat else 't')]))

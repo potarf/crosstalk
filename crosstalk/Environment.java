@@ -57,7 +57,7 @@ public class Environment{
   public Environment(int stepsPerNs, int numCells,
                      int pulseLen, int cellPulseTime,
                      double crossProb,
-                     double t1, double t2, double t3, double t4, double t5,
+                     double t1, double t2, double t3, double t4, double t5, double tRc,
                      boolean saturation, boolean crosstalk, boolean batchJob){
     
     // Initialize all environment variables
@@ -80,7 +80,7 @@ public class Environment{
 	  this.cellProb     = new CellProbability(0, (int)(getRiseTime() + 1),
                                         timeToStep(getRiseTime()), t1, t2);
 	  this.cellRecharge = new CellRecharge(   0, getCellPulseTime(),
-                                        timeToStep(getCellPulseTime()), t1);
+                                        timeToStep(getCellPulseTime()), t1, tRc);
 
     // Set the simulation time to 0
     step = 0;

@@ -242,18 +242,19 @@ class CellProbability extends NormExpression{
 class CellRecharge extends NormExpression{
 
   private double t1;
+  private double tRc;
 
-  public CellRecharge(int minimum, int maximum, int numSteps, double t1){
+  public CellRecharge(int minimum, int maximum, int numSteps, double t1, double tRc){
     super(minimum, maximum, numSteps);
 
     this.t1 = t1;
+    this.tRc = tRc;
     
     updateValues();
   }
 
   
 	protected double operation(double val){
- 		double tRc = 9;
 		double t2 = 40;
   
     if(val < t1){

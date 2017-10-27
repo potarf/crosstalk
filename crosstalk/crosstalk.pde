@@ -28,6 +28,7 @@ final double  T2 = 0.05;
 final double  T3 = 0.5;
 final double  T4 =  5;
 final double  T5 = 0.6;
+final double  TRC = 9.0;
 final boolean SATURATION  = true;
 final boolean CROSSTALK   = true;
 final boolean BATCH_JOB   = false;
@@ -36,7 +37,7 @@ final int NUM_PHOTONS = 1000;
 void setup(){
   simulator.Environment env = new simulator.Environment( GRANLARITY, NUM_CELLS, 
                                 PULSE_LEN, C_PULSE_LEN, CROSS_PROB,
-                                T1, T2, T3, T4, T5,
+                                T1, T2, T3, T4, T5, TRC,
                                 SATURATION, CROSSTALK, BATCH_JOB);
   size(1110, 700);
   sim = new simulator.Simulator(NUM_PHOTONS, env);
