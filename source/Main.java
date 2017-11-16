@@ -39,22 +39,23 @@ public class Main{
     double t3       = Double.valueOf(args[8]);
     double t4       = Double.valueOf(args[9]);
     double t5       = Double.valueOf(args[10]);
+    double tRc      = Double.valueOf(args[11]);
     
     // Get output directory
     String directory  = "";
-    if(args.length > 11){
-        directory = args[11];
+    if(args.length > 12){
+        directory = args[12];
     }
 
-    boolean cross   = args[12].charAt(0) == 't';
-    boolean sat     = args[13].charAt(0) == 't';
+    boolean cross   = args[13].charAt(0) == 't';
+    boolean sat     = args[14].charAt(0) == 't';
 
     // Define the simulator and the output
     Simulator sim;
     Formatter output = null;
     Environment env = new Environment(granularity, numCells, 
                                   100, 40, .046,
-                                  t1, t2, t3, t4, t5,
+				      t1, t2, t3, t4, t5, tRc,
                                   sat, cross, true);
 
     // Iterate through each data collection

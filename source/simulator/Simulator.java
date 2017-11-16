@@ -14,7 +14,7 @@ import java.lang.Math;
  */
 
 public class Simulator{
-
+  
   // Arrays for reading out data from the chip
 	private StatDist pulseData[];
 	private double[] time, current, mean, variance, input, pulse, bin;
@@ -295,6 +295,3 @@ public class Simulator{
   }
 
 }
-
-
-

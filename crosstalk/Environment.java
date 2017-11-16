@@ -35,6 +35,7 @@ public class Environment{
   private double t3;
   private double t4;
   private double t5;
+  private double tRc;
 
   //Effect flags
   private boolean saturation;

@@ -68,6 +68,17 @@ run this code
 ```Shell
 $ python run_sim.py -g 3 -p 5 --min 1000 --max 50000 -s 1000 data/raw_data/
 ```
+Options:
+--min pulse size of first run
+--max pulse size of last run
+-g sets number of steps per nanosenc default 5
+-s increment number of photons between runs default 1000
+-p sets number of pulses per run default 10
+-x sets number of pixels on a chip default 37994
+--tRc sets cell recharge time constant default 9
+--noCross sets weather there is crosstalk default false
+--noSat sets weather there is saturation effects default false
+Last argument is location of output file
 
 #### To run the simulator with a live, interactive graphical panel
 
@@ -78,6 +89,14 @@ $ processing-java --sketch=crosstalk --run
 ```
 
 Or open the folder 'crosstalk/crosstalk' in the processing IDE
+
+To convert output .dat files to .root files run the following command in /data/
+
+python to_root.py [.dat input file] [.root output file]
+example:
+python to_root.py ./run.dat ./outputfile.root
+
+**warning the output file must end in '.root'
 
 ## Authors
 
