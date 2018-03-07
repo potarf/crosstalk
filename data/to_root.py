@@ -47,6 +47,7 @@ def datToRoot(iFilename, oFilename):
                     len(data[0]) - 1, temp)
       for j in range(len(data[i + 1])):
         hist.SetBinContent(j + 1, data[i + 1][j])
+      hist.Scale(1/hist.Integral())
       histo.Add(hist)
     histo.Write()
 
